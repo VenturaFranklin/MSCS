@@ -1,0 +1,169 @@
+#Created by Elijah Keeswood
+#03/01/2022
+
+#Import for GUI creator (tkinter)
+import tkinter as tk
+from tkinter import *
+
+##Imports for Raspberry Pi
+#import time
+#import board
+#from adafruit_motorkit import MotorKit
+
+#import tkfont
+#import RPi.GPIO as GPIO
+#import time
+
+#Hardware#
+# GPIO.setmode(GPIO.BCM)
+# GPIO.setup(26, GPIO.OUT)
+# GPIO.output(26, GPIO.HIGH)
+# time.sleep(1)
+# GPIO.output(26, GPIO.LOW)
+
+LARGE_FONT= ("Verdana", 12)
+
+win=Tk()
+win.columnconfigure(0, minsize=250)
+win.rowconfigure([0,1], minsize=100)
+
+#myFont = tkFont.Font(family = 'Helvetica', size = 36, weight = 'bold')
+
+#Main Class
+class SeaofBTCapp(tk.Tk):
+
+    def __init__(self, *args, **kwargs):
+        
+        tk.Tk.__init__(self, *args, **kwargs)
+        container = tk.Frame(self)
+
+        container.pack(side="top", fill="both", expand = True)
+
+        container.grid_rowconfigure(0, weight=1)
+        container.grid_columnconfigure(0, weight=1)
+
+        self.frames = {}
+
+        for F in (StartPage, PageOne, PageTwo):
+
+            frame = F(container, self)
+
+            self.frames[F] = frame
+
+            frame.grid(row=0, column=0, sticky="nsew")
+
+        self.show_frame(StartPage)
+
+    def show_frame(self, cont):
+
+        frame = self.frames[cont]
+        frame.tkraise()
+
+        
+
+class StartPage(tk.Frame):
+    def gripperWindow():
+        print("Gripper button pressed")
+    
+    def cleanProcess():
+        print("Clean button pressed")
+    
+    def componentsMenu():
+        print("components button pressed")
+    
+    def filesMenu():
+        print("Files button pressed")
+
+    def exitProgram():
+        print("Exit Button pressed")
+#     GPIO.cleanup()
+#     win.quit()
+
+
+    cleanButton = tk.Button(win, text="Clean", command = cleanProcess, height=5, width = 15)
+    cleanButton.grid(row=0, column=5)
+
+    gripperButton = Button(win, text="Gripper", command = gripperWindow, height=3, width = 10)
+    gripperButton.grid(row=1, column=5)
+
+    componentsButton = Button(win, text="Components", command = componentsMenu, height=4, width = 10)
+    componentsButton.grid(row=2, column=5)
+
+    filesButton = Button(win, text="Files", command=filesMenu, height=2, width=10)
+    filesButton.grid(row=3, column=5)
+
+    exitButton = Button(win, text = "Exit", command = exitProgram, height = 4, width = 8)
+    exitButton.grid(row=4, column=5)
+  
+    def __init__(self, parent, controller):
+
+        tk.Frame.__init__(self,parent)
+
+
+        label = tk.Label(self, text="Start Page", font=LARGE_FONT)
+        label.pack(pady=10,padx=10)
+
+        componentsButton = tk.Button(self, text="Components Page",
+                            command=lambda: controller.show_frame(PageOne))
+        componentsButton.pack()
+
+        button2 = tk.Button(self, text="Visit Page 2",
+                            command=lambda: controller.show_frame(PageTwo))
+        button2.pack()
+
+#       button3. = tk.Button(self, text="nothing", command= )
+#       button3.pack()
+
+
+    def ledON():
+        print("LED button pressed")
+    #     GPIO.output(26, GPIO.HIGH)
+    #     if GPIO.input(26):
+    #         GPIO.output(26,GPIO.LOW)
+    #         ledButton["text"] = "LED ON"
+    #     else:
+    #         GPIO.output(26,GPIO.HIGH)
+    #         ledButton["text"] = "LED OFF"
+
+
+
+ 
+
+
+
+
+class PageOne(tk.Frame):
+
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self, parent)
+        label = tk.Label(self, text="Page One!!!", font=LARGE_FONT)
+        label.pack(pady=10,padx=10)
+
+        button1 = tk.Button(self, text="Back to Home",
+                            command=lambda: controller.show_frame(StartPage))
+        button1.pack()
+
+        button2 = tk.Button(self, text="Page Two",
+                            command=lambda: controller.show_frame(PageTwo))
+        button2.pack()
+
+
+class PageTwo(tk.Frame):
+
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self, parent)
+        label = tk.Label(self, text="Page Two!!!", font=LARGE_FONT)
+        label.pack(pady=10,padx=10)
+
+        button1 = tk.Button(self, text="Back to Home",
+                            command=lambda: controller.show_frame(StartPage))
+        button1.pack()
+
+        button2 = tk.Button(self, text="Page One",
+                            command=lambda: controller.show_frame(PageOne))
+        button2.pack()
+        
+
+
+app = SeaofBTCapp()
+app.mainloop()
