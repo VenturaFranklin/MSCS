@@ -1,0 +1,14 @@
+roller1_pwm: 4
+roller2_pwm: 17
+peristaltic_pwm: 27
+waterpump_pwm: 22
+rollerboard_standby: 10
+pumpboard_standby: 9
+rollera1: 11
+rollera2: 0
+rollerb1: 14
+rollerb2: 15
+peristaltic1: 18
+peristaltic2: 23
+waterpump1: 24
+waterpump2: 25
