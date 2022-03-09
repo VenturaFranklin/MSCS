@@ -51,19 +51,17 @@ def outwards():
     io.output(rollerB1, True)
     io.output(rollerB2, False)
 
+def startRollers():
+    #start pwm
+    rollerA_pwm.start(100)
+    rollerB_pwm.start(100)
 
-#start pwm
-rollerA_pwm.start(100)
-rollerB_pwm.start(100)
+    #Main Process
+    inwards()
+    time.sleep(10)
 
-#Main Process
-inwards()
-sleep(4)
-outwards()
-sleep(4)
-
-rollerA_pwm.stop()
-rollerB_pwm.stop()
+    rollerA_pwm.stop()
+    rollerB_pwm.stop()
 
 
 io.output(roller_standby, False)
