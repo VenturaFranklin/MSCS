@@ -1,8 +1,7 @@
-#Created by Elijah Keeswood on 03/12/2022
+#Created by Elijah Keeswood on 3/9/2022
 #MSCS GUI
 #Senior Design Team: 22010
-#Rollers Off Code
-#We don't need this code. Only two lines of code.
+#Start Rollers
 
 import RPi.GPIO as io
 import time
@@ -37,8 +36,32 @@ rollerB_pwm = io.PWM(rollerB_pwm, 1000)
 io.output(roller_standby, True)
 
 
-rollerA_pwm.stop() #ONLY PART WE NEED
-rollerB_pwm.stop() 
+#Rolling functions
+def inwards():
+    io.output(rollerA1, True)    
+    io.output(rollerA2, False)
+
+    io.output(rollerB1, False)    
+    io.output(rollerB2, True)
+
+def outwards():
+    io.output(rollerA1, False)
+    io.output(rollerA2, True)
+
+    io.output(rollerB1, True)
+    io.output(rollerB2, False)
+
+def startRollers():
+    #start pwm
+    rollerA_pwm.start(100)
+    rollerB_pwm.start(100)
+
+    #Main Process
+    inwards()
+    
+def stopRollers():
+    rollerA_pwm.stop()
+    rollerB_pwm.stop()
 
 
 io.output(roller_standby, False)
