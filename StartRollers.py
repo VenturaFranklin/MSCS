@@ -1,7 +1,6 @@
 #Created by Elijah Keeswood on 3/9/2022
-#change
-
-#MSCS 
+#MSCS GUI
+#Senior Design Team: 22010
 #Start Rollers
 
 import RPi.GPIO as io

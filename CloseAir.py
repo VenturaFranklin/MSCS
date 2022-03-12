@@ -10,7 +10,7 @@ import time
 #def open_valve():
  #   automationhat.relay.one.on()
     
-def close_valve():
+def close_valve(): 
     automationhat.relay.one.off()
 
 
