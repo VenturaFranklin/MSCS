@@ -10,14 +10,14 @@ io.setmode(io.BCM)
 
 #pin assignments
 pumpboard_standby = 9
-peristaltic_pwm = 27
-waterpump_pwm = 22
+peristaltic_pwm = 22
+waterpump_pwm = 27
 
-peristaltic1 = 18
-peristaltic2 = 23
+peristaltic1 = 24
+peristaltic2 = 25
 
-waterpump1 = 24
-waterpump2 = 25
+waterpump1 = 23
+waterpump2 = 18
 
 #pin setups
 io.setwarnings(False)

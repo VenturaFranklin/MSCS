@@ -10,10 +10,10 @@ io.setmode(io.BCM)
 
 #pin assignments
 pumpboard_standby = 9
-waterpump_pwm = 22
+waterpump_pwm = 27
 
-waterpump1 = 24
-waterpump2 = 25
+waterpump1 = 23
+waterpump2 = 18
 
 #pin setups
 io.setwarnings(False)
@@ -30,14 +30,19 @@ waterpump_pwm = io.PWM(waterpump_pwm, 1000)
 io.output(pumpboard_standby, True)
 
 #functions
-def dispenseWater():
+def startWater():
     io.output(waterpump1, True)    
     io.output(waterpump2, False)
 
-    time.sleep(10) #time can change
-    
+
+def stopWater():
     #stop pwm
     waterpump_pwm.stop()
+
+def rinse():
+    startWater()
+    time.sleep(5)
+    stopWater()
 
 io.output(pumpboard_standby, False)
 

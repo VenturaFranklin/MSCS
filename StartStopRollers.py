@@ -11,8 +11,8 @@ io.setmode(io.BCM)
 #roller board standby pins
 roller_standby = 10
 #rollers A and B pwm pins
-rollerA_pwm = 4
-rollerB_pwm = 17
+rollerA_pwm = 17
+rollerB_pwm = 4
 #rollers A and B input output pins
 rollerA1 = 11
 rollerA2 = 0

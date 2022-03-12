@@ -1,44 +1,37 @@
 #Created by Elijah Keeswood on 03/08/2022
 #Copyright @ 2022 Elijah Keeswood. All rights reserved.
-#MSCS GUI MK1
 #Senior Design Team: 22010
+#MSCS GUI MK1
 
 #Import tkinter library
 import tkinter as tk
 from tkinter import *
 from tkinter import ttk
 from tkinter import filedialog #For accessing computers files
-##Imports for Raspberry Pi
+
+#Imports for Raspberry Pi
 import time
+from tracemalloc import start
+from turtle import up
 #import board
 #from adafruit_motorkit import MotorKit
 #import RPi.GPIO as GPIO
+
 ##Imports for Automation Hat
 #import automationhat
 #import RPi.GPIO as io
 #from time import sleep
 
-#Calls to separate file in same folder and imports the file's imports
-from ticControl import * #linear Actuator
-from StartRollers import *
-from StopRollers import *
-from DispenseReagent import * 
-from WaterPump import * 
-from OpenAir import * 
-from CloseAir import *
-
-
-##Hardware
-# GPIO.setmode(GPIO.BCM)
-# GPIO.setup(26, GPIO.OUT)
-# GPIO.output(26, GPIO.HIGH)
-# time.sleep(1)
-# GPIO.output(26, GPIO.LOW)
-
-
+# #Accesses separate files in same folder and imports the file's imports
+# from ticControl import * #linear Actuator
+# from StartStopRollers import *
+# from DispenseReagent import * 
+# from WaterPump import * 
+# from OpenCloseAir import * 
 
 #Variables
-LARGE_FONT = ("Verdana", 12)
+LARGE_FONT = ("Verdana", 20)
+MED_FONT = ("Calibri", 15)
 
 
 
@@ -87,28 +80,44 @@ def stopClean():
 
 def mrClean():
     cleanPopup = tk.Tk()
-    cleanPopup.title("Cleaning")
-    button = tk.Button(cleanPopup, text = "Stop", command = stopClean)
+    cleanPopup.title("Cleaning Initiated")
+    button = tk.Button(cleanPopup, text = "Stop", width=10, height=10, command = stopClean)
     button.pack()
 
-    print ("Go to Home")
-    ticControl()#call to separate file fxn
-    print("take picture")
-    print("Start Rollers")
+    # print ("Go to Home")
+    # gotoHome()#calling to function in ticControl.py
+   
+    # print("take picture")
+    # print("Start Rollers")
+    # startRollers() #calling to fxn in StartRollers.py
     
-    print("Dispense Reagent")
-    print("Go to Bottom")
-    print("CLEAN OSCILLATE")
-    print("Rollers off")
-    print("Start Water Pump")
-    print("Open Air")
-    print("DRYING OSCILLATE")
+    # print("Dispense Reagent")
+    # dispenseReagents() #calling to fxn in DispenseReagents.py
+   
+    # print("Go to Bottom")
+
+    # print("CLEAN OSCILLATE")
+
+    # print("Rollers off")
+    # stopRollers()
+  
+    # print("Start Water Pump")
+    # rinse() #rinsing fxn from WaterPump.py #can change to just dispenseWater()
+
+    # print("Open Air")
+    # open_valve() #from OpenCloseAir.py
+
+    # print("DRYING OSCILLATE")
+  
+    
+    # print("close air")
+    # close_valve()
+
     cleanPopup.mainloop()
 
 def browseFiles():
     filename = filedialog.askopenfilename(initialdir = "/") #opens and displays file explorer
       
-
 
 class StartPage(tk.Frame):                                 #The Start Page. tk.Frame inherits so we don't have to call.
     def __init__(self, parent, controller):
@@ -117,17 +126,17 @@ class StartPage(tk.Frame):                                 #The Start Page. tk.F
                                                              #LARGE_FONT defined at the top
         label.pack(pady=10, padx=10) #pad puts padding on it. looks nice.
 
-        button1 = tk.Button(self, text="CLEAN", width =20, height=5, command = mrClean)
+        button1 = tk.Button(self, text="CLEAN", width =30, height=7, font=MED_FONT, command = mrClean)
         button1.pack()
 
-        button2 = tk.Button(self, text="Components", width =20, height=5,
+        button2 = tk.Button(self, text="Components", width =20, height=6, font=MED_FONT,
                             command = lambda: controller.show_frame(ComponentsPage)) 
                                      #lambda creates a quick throwaway fxn. Only here when we call it.
                                      #can also pass variables through; command = lambda: fxn("sus")
                                                                    #ComponentsPage is a class                        
         button2.pack()
         
-        button4 = tk.Button(self, text="Files", width =10, height=5, command = browseFiles) #calls to browse files explorer
+        button4 = tk.Button(self, text="Files", width =20, height=5, font=MED_FONT, command = browseFiles) #calls to browse files explorer
         button4.pack()
 
 
@@ -137,15 +146,15 @@ class ComponentsPage(tk.Frame):
         label = tk.Label(self, text = "Components", font = LARGE_FONT)
         label.pack(pady=10, padx=10)
 
-        button2 = tk.Button(self, text="Rollers",
+        button2 = tk.Button(self, text="Rollers", width =20, height=5,font=MED_FONT,
                             command=lambda: controller.show_frame(RollersPage))
         button2.pack()
 
-        button3= tk.Button(self, text="Linear Actuator",
+        button3= tk.Button(self, text="Linear Actuator",width =20, height=5, font=MED_FONT,
                             command=lambda: controller.show_frame(LinActPage))
         button3.pack()
 
-        button4 = tk.Button(self, text="Pumps",
+        button4 = tk.Button(self, text="Pumps", width =20, height=5, font=MED_FONT,
                             command=lambda: controller.show_frame(PumpsPage))
         button4.pack()
 
@@ -153,51 +162,21 @@ class ComponentsPage(tk.Frame):
                             command = lambda: controller.show_frame(StartPage)) 
         button1.pack()
 
-##Integrated code
-#def dcMotors(): #DC Motors test by Richard
-#    io.setmode(io.BCM)
-
-#    standby_pin = 27
-
-#    a_pwm_pin = 18
-#    a1_pin = 4
-#    a2_pin = 17
-
-#    io.setwarnings(False)
-#    io.setup(a1_pin, io.OUT)
-#    io.setup(a2_pin, io.OUT)
-#    io.setup(standby_pin, io.OUT)
-#    io.setup(a_pwm_pin, io.OUT)
-#    a_pwm = io.PWM(a_pwm_pin, 1000)
-
-#    io.output(standby_pin, True)
-
-#    def clockwise():
-#        io.output(a1_pin, True)    
-#        io.output(a2_pin, False)
-
-#    def counter_clockwise():
-#        io.output(a1_pin, False)
-#        io.output(a2_pin, True)
-
-#    a_pwm.start(100)
-
-#    counter_clockwise()
-#    sleep(2)
-
-#    a_pwm.stop()
-#    io.output(standby_pin, False)
 
 class RollersPage(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         label = tk.Label(self, text = "Rollers", font = LARGE_FONT)
         label.pack(pady=10, padx=10)
+        
+        #start rollers
+       # button3 = tk.Button(self, text="Start", width =20, height=5, command = startRollers)
+       # button3.pack()
+        #stop rollers
+        # button4 = tk.Button(self, text="Stop", width =20, height=5, command = stopRollers)
+       # button4.pack()
 
-        #button3 = tk.Button(self, text="Run DC motors", command = dcMotors)
-        #button3.pack()
-
-        button2 = tk.Button(self, text="Components",                       
+        button2 = tk.Button(self, text="Components",                      
                             command = lambda: controller.show_frame(ComponentsPage))
         button2.pack()
 
@@ -211,7 +190,20 @@ class LinActPage(tk.Frame):
         label = tk.Label(self, text = "Linear Actuator", font = LARGE_FONT)
         label.pack(pady=10, padx=10)
 
-        button2 = tk.Button(self, text="Components",                       
+       # button3 = tk.Button(self, text="Calibrate", width =20, height=5, command = calibrate)
+       # button3.pack()
+        #start
+        # button4 = tk.Button(self, text="Start", width =20, height=5, command = start)
+       # button4.pack()
+        #up
+        # button5 = tk.Button(self, text="Up", width =20, height=5, command = up)
+       # button5.pack()
+        #down
+        # button6 = tk.Button(self, text="Down", width =20, height=5, command = down)
+       # button6.pack()
+
+
+        button2 = tk.Button(self, text="Back to Components",                       
                             command = lambda: controller.show_frame(ComponentsPage))
         button2.pack()
 
@@ -225,11 +217,11 @@ class PumpsPage(tk.Frame):
         label = tk.Label(self, text = "Pumps", font = LARGE_FONT)
         label.pack(pady=10, padx=10)
 
-        button3 = tk.Button(self, text="Solenoid Valves",                        
+        button3 = tk.Button(self, text="Solenoid Valves",width=20, height=5, font=MED_FONT,                       
                             command = lambda: controller.show_frame(SolValPage))
         button3.pack()
 
-        button2 = tk.Button(self, text="Components",                         
+        button2 = tk.Button(self, text="Back to Components",                         
                             command = lambda: controller.show_frame(ComponentsPage))
         button2.pack()
 
@@ -237,20 +229,6 @@ class PumpsPage(tk.Frame):
                             command = lambda: controller.show_frame(StartPage))
         button1.pack()
 
-##Integrated Code
-#def SolValves(): #Solenoid Valves Test by Richard
-#    def open_valve():
-#        automationhat.relay.one.on()
-    
-#    def close_valve():
-#        automationhat.relay.one.off()
-
-#    if automationhat.is_automation_hat():
-#        automationhat.light.power.write(1)
-    
-#        open_valve()
-#        time.sleep(1)
-#        close_valve()
 
 class SolValPage(tk.Frame):
     def __init__(self, parent, controller):
@@ -261,14 +239,13 @@ class SolValPage(tk.Frame):
         #button3 = tk.Button(self, text="Run Solenoid Valves", command = SolValves)
         #button3.pack()
 
-        button2 = tk.Button(self, text="Components",                         
-                            command = lambda: controller.show_frame(ComponentsPage))
+        button2 = tk.Button(self, text="Back to Pumps",                         
+                            command = lambda: controller.show_frame(PumpsPage))
         button2.pack()
 
         button1 = tk.Button(self, text="Back to Home",                        
                             command = lambda: controller.show_frame(StartPage))
         button1.pack()
-
 
 
 
