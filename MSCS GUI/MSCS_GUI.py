@@ -1,6 +1,6 @@
 #Created by Elijah Keeswood on 03/08/2022
 #Copyright @ 2022 Elijah Keeswood. All rights reserved.
-#MSCS GUI
+#MSCS GUI MK0
 #Senior Design Team: 22010
 
 #Import tkinter library
@@ -57,7 +57,6 @@ class MainClass(tk.Tk):                                      #BASELINE of code f
                                                     #So when def show_frame it shows current frame.      
             frame = F(container, self)  #pass through container and self
             self.frames[F] = frame
-            
             frame.grid(row=0, column=0, sticky="nsew")     #grid is 2nd (pack being 1st) layout format "superior"
             #frame.grid(row=110, column=110, sticky="nsew")#110 dimensions don't make it huge, but will order it based on which one is greater/lesser
                                                            #sticky = alignment + stretch
@@ -104,22 +103,21 @@ def browseFiles():
 class StartPage(tk.Frame):                                 #The Start Page. tk.Frame inherits so we don't have to call.
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
-      #  tk.geometry('300x200')
         label = tk.Label(self, text="MSCS Main Page", font = LARGE_FONT) #class is tk.label() which creates the object = label. 
                                                              #LARGE_FONT defined at the top
         label.pack(pady=10, padx=10) #pad puts padding on it. looks nice.
 
-        button1 = tk.Button(self, text="CLEAN", command = mrClean)
+        button1 = tk.Button(self, text="CLEAN", width =20, height=5, command = mrClean)
         button1.pack()
 
-        button2 = tk.Button(self, text="Components", 
+        button2 = tk.Button(self, text="Components", width =20, height=5,
                             command = lambda: controller.show_frame(ComponentsPage)) 
                                      #lambda creates a quick throwaway fxn. Only here when we call it.
                                      #can also pass variables through; command = lambda: fxn("sus")
                                                                    #ComponentsPage is a class                        
         button2.pack()
         
-        button4 = tk.Button(self, text="Files", command = browseFiles) #calls to browse files explorer
+        button4 = tk.Button(self, text="Files", width =10, height=5, command = browseFiles) #calls to browse files explorer
         button4.pack()
 
 
@@ -268,6 +266,7 @@ class SolValPage(tk.Frame):
 
 #where code starts running(i think)
 app = MainClass()
+app.geometry ("1000x500") #width x height
 app.mainloop()
 
 
