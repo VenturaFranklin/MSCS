@@ -105,13 +105,12 @@ def mrClean():
     # rinse() #rinsing fxn from WaterPump.py #can change to just dispenseWater()
 
     # print("Open Air")
-    # open_valve() #from OpenCloseAir.py
+    # open_air() #from OpenCloseAir.py
 
     # print("DRYING OSCILLATE")
-  
     
     # print("close air")
-    # close_valve()
+    # close_air()
 
     cleanPopup.mainloop()
 

@@ -7,25 +7,23 @@ import RPi.GPIO as io
 import automationhat
 import time
 
-def open_main():
+
+if automationhat.is_automation_hat():
+    automationhat.light.power.write(1)
+
+#functions for opening and closing valves
+def open_air():
     automationhat.relay.one.on()
     
-def close_main():
+def close_air():
     automationhat.relay.one.off()
 
 def open_gripper():
     automationhat.relay.two.on()
-    
-def close_gripper():
-    automationhat.relay.two.off()
-
-def open_dry():
-    automationhat.relay.three.on()
-    
-def close_dry():
     automationhat.relay.three.off()
 
+def close_gripper():
+    automationhat.relay.two.off()
+    automationhat.relay.three.on()
 
-if automationhat.is_automation_hat():
-    automationhat.light.power.write(1)
     
