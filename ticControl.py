@@ -1,8 +1,11 @@
 import subprocess
 import yaml
 import time
+import atexit
 
-settingFilePath = "/home/pi/MSCS/tic_settings.txt"
+
+
+settingFilePath = "/home/pi/MSCS/" # where the settings are located, this still needs to be checked
 debugFlag = True
 calibratePos = 0 # temporary calibration position, substitute for a homeing switch
 calibrateFlag = False
@@ -10,8 +13,15 @@ homePos = 10000 # position of slide right above rollers, in front of camera
 upPos = 2000 # top most position of slide
 downPos = 15000 # bottom most position of slide
 calStepSize = 1000 # step size for manual calibration / homing
+LAsettings = {
+  "currentpos": 0
+  "homepos": 10000
+  "uppos": 2000
+  "downpos": 15000
+} # dictionary for variable storage to file
 
 def start():
+  atexit.register(exit_handler)
   log("starting linear actuator")
   loadSettings()
   ticcmd("--exit-safe-start")
@@ -29,7 +39,15 @@ def gotoHome():
 
 def loadSettings():
   log("loading LA settings from file")
-  ticcmd('--settings', settingFilePath)
+  ticcmd('--settings', settingFilePath + "tic_settings.txt")
+  lasettings = settingFilePath + "LASettings.yaml"
+  with open(lasettings, "r") as file:
+    LAsettings = yaml.load(file, Loader=yaml.FullLoader)
+
+def exit_handler():
+  lasettings = settingFilePath + "LASettings.yaml"
+  with open(lasettings, "w") as file:
+    LAsettings = yaml.dump(file, Loader=yaml.FullLoader)
 
 # manually lowers the slide by a set step size, used to manually home the LA
 def down(num):
