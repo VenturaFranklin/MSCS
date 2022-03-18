@@ -5,9 +5,11 @@
 
 import RPi.GPIO as io
 import time
+import board
+from adafruit_motorkit import MotorKit
 
 io.setmode(io.BCM)
-
+kit = MotorKit(i2c=board.I2C())
 #roller board standby pins
 roller_standby = 10
 #rollers A and B pwm pins
@@ -19,6 +21,7 @@ rollerA2 = 0
 rollerB1 = 14
 rollerB2 = 15
 
+oldHatFlag = True
 #pin setups
 io.setwarnings(False)
 
@@ -33,7 +36,7 @@ rollerA_pwm = io.PWM(rollerA_pwm, 1000)
 io.setup(rollerB_pwm, io.OUT)
 rollerB_pwm = io.PWM(rollerB_pwm, 1000)
 
-io.output(roller_standby, True)
+
 
 
 #Rolling functions
@@ -52,16 +55,29 @@ def outwards():
     io.output(rollerB2, False)
 
 def startRollers():
-    #start pwm
-    rollerA_pwm.start(100)
-    rollerB_pwm.start(100)
 
-    #Main Process
-    inwards()
+    if oldHatFlag:
+        kit.motor1.throttle = 1
+        kit.motor2.throttle = 1
+    else:
+
+        #start pwm
+        
+        rollerA_pwm.start(100)
+        rollerB_pwm.start(100)
+
+        #Main Process
+        inwards()
+        io.output(roller_standby, True)
     
 def stopRollers():
-    rollerA_pwm.stop()
-    rollerB_pwm.stop()
+    if oldHatFlag:
+        kit.motor1.throttle = 0
+        kit.motor2.throttle = 0
+    else:
+        rollerA_pwm.stop()
+        rollerB_pwm.stop()
+        io.output(roller_standby, False)
 
 
-io.output(roller_standby, False)
+
