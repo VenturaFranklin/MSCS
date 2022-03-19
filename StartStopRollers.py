@@ -58,7 +58,7 @@ def startRollers():
 
     if oldHatFlag:
         kit.motor1.throttle = 1
-        kit.motor2.throttle = 1
+        kit.motor2.throttle = -1
     else:
 
         #start pwm

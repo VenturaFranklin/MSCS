@@ -22,12 +22,12 @@ from turtle import up
 #import RPi.GPIO as io
 #from time import sleep
 
-# #Accesses separate files in same folder and imports the file's imports
-# from ticControl import * #linear Actuator
-# from StartStopRollers import *
-# from DispenseReagent import * 
-# from WaterPump import * 
-# from OpenCloseAir import * 
+#Accesses separate files in same folder and imports the file's imports
+from ticControl import * #linear Actuator
+from StartStopRollers import *
+from DispenseReagent import * 
+from WaterPump import * 
+from OpenCloseAir import * 
 
 #Variables
 LARGE_FONT = ("Verdana", 20)
@@ -88,30 +88,41 @@ def mrClean():
     # gotoHome()#calling to function in ticControl.py
    
     # print("take picture")
-    # print("Start Rollers")
-    # startRollers() #calling to fxn in StartRollers.py
+    print("Start Rollers")
+    startRollers() #calling to fxn in StartRollers.py
     
-    # print("Dispense Reagent")
-    # dispenseReagents() #calling to fxn in DispenseReagents.py
+    print("Dispense Reagent")
+    dispenseSoap() #calling to fxn in DispenseReagents.py
+    time.sleep(2)
+    stopSoap()
    
-    # print("Go to Bottom")
+    print("Go to Home")
+    gotoHome()
 
-    # print("CLEAN OSCILLATE")
+    print("CLEAN OSCILLATE")
+    oscClean()
 
-    # print("Rollers off")
-    # stopRollers()
+    print("Rollers off")
+    stopRollers()
   
-    # print("Start Water Pump")
-    # rinse() #rinsing fxn from WaterPump.py #can change to just dispenseWater()
-
-    # print("Open Air")
-    # open_air() #from OpenCloseAir.py
-
-    # print("DRYING OSCILLATE")
+    print("Rinse")
+    startWater()#rinsing fxn from WaterPump.py #can change to just dispenseWater()
+    time.sleep(5)
+    stopWater()
     
-    # print("close air")
-    # close_air()
+    print("Open Air")
+    open_air() #from OpenCloseAir.py
 
+    print("DRYING OSCILLATE")
+    oscDry()
+    
+    print("close air")
+    close_air()
+    
+    print("go to Top")
+    gotoTop()
+    
+    print("done")
     cleanPopup.mainloop()
 
 def browseFiles():
@@ -169,11 +180,11 @@ class RollersPage(tk.Frame):
         label.pack(pady=10, padx=10)
         
         #start rollers
-       # button3 = tk.Button(self, text="Start", width =20, height=5, command = startRollers)
-       # button3.pack()
+        button3 = tk.Button(self, text="Start", width =20, height=5, command = startRollers)
+        button3.pack()
         #stop rollers
-        # button4 = tk.Button(self, text="Stop", width =20, height=5, command = stopRollers)
-       # button4.pack()
+        button4 = tk.Button(self, text="Stop", width =20, height=5, command = stopRollers)
+        button4.pack()
 
         button2 = tk.Button(self, text="Components",                      
                             command = lambda: controller.show_frame(ComponentsPage))
@@ -189,17 +200,17 @@ class LinActPage(tk.Frame):
         label = tk.Label(self, text = "Linear Actuator", font = LARGE_FONT)
         label.pack(pady=10, padx=10)
 
-       # button3 = tk.Button(self, text="Calibrate", width =20, height=5, command = calibrate)
-       # button3.pack()
+        button3 = tk.Button(self, text="Calibrate", width =20, height=5, command = calibrate)
+        button3.pack()
         #start
-        # button4 = tk.Button(self, text="Start", width =20, height=5, command = start)
-       # button4.pack()
+        button4 = tk.Button(self, text="Start", width =20, height=5, command = start)
+        button4.pack()
         #up
-        # button5 = tk.Button(self, text="Up", width =20, height=5, command = up)
-       # button5.pack()
+        button5 = tk.Button(self, text="Up", width =20, height=5, command = up)
+        button5.pack()
         #down
-        # button6 = tk.Button(self, text="Down", width =20, height=5, command = down)
-       # button6.pack()
+        button6 = tk.Button(self, text="Down", width =20, height=5, command = down)
+        button6.pack()
 
 
         button2 = tk.Button(self, text="Back to Components",                       
@@ -219,6 +230,18 @@ class PumpsPage(tk.Frame):
         button3 = tk.Button(self, text="Solenoid Valves",width=20, height=5, font=MED_FONT,                       
                             command = lambda: controller.show_frame(SolValPage))
         button3.pack()
+        
+        button4 = tk.Button(self, text="Start Soap", command = dispenseSoap)
+        button4.pack()
+        
+        button5 = tk.Button(self, text="Stop Soap", command = stopSoap)
+        button5.pack()
+
+        button6 = tk.Button(self, text="Start Water", command = startWater)
+        button6.pack()
+        
+        button6 = tk.Button(self, text="Stop Water", command = stopWater)
+        button6.pack()
 
         button2 = tk.Button(self, text="Back to Components",                         
                             command = lambda: controller.show_frame(ComponentsPage))
@@ -235,8 +258,17 @@ class SolValPage(tk.Frame):
         label = tk.Label(self, text = "Solenoid Valves", font = LARGE_FONT)
         label.pack(pady=10, padx=10)
 
-        #button3 = tk.Button(self, text="Run Solenoid Valves", command = SolValves)
-        #button3.pack()
+        button3 = tk.Button(self, text="Open Air", command = open_air)
+        button3.pack()
+        
+        button4 = tk.Button(self, text="Close Air", command = close_air)
+        button4.pack()
+        
+        button5 = tk.Button(self, text="Open Gripper", command = open_gripper)
+        button5.pack()
+
+        button6 = tk.Button(self, text="Close Gripper", command = close_gripper)
+        button6.pack()
 
         button2 = tk.Button(self, text="Back to Pumps",                         
                             command = lambda: controller.show_frame(PumpsPage))

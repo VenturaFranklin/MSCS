@@ -6,43 +6,48 @@
 import RPi.GPIO as io
 import time
 
+io.setwarnings(False)
 io.setmode(io.BCM)
 
 #pin assignments
 pumpboard_standby = 9
-waterpump_pwm = 27
+waterpump_pwm_num = 27
 
 waterpump1 = 23
 waterpump2 = 18
 
+
 #pin setups
 io.setwarnings(False)
 
-io.setup(waterpump1), io.OUT)
+io.setup(waterpump1, io.OUT)
 io.setup(waterpump2, io.OUT)
 
 io.setup(pumpboard_standby, io.OUT)
 
-io.setup(waterpump_pwm, io.OUT)
+io.setup(waterpump_pwm_num, io.OUT)
 
-waterpump_pwm = io.PWM(waterpump_pwm, 1000)
+waterpump_pwm = io.PWM(waterpump_pwm_num, 1000)
 
-io.output(pumpboard_standby, True)
 
 #functions
 def startWater():
+    waterpump_pwm.start(50)
+    io.output(pumpboard_standby, True)
     io.output(waterpump1, True)    
     io.output(waterpump2, False)
+    #io.output(pumpboard_standby, False)
 
 
 def stopWater():
     #stop pwm
     waterpump_pwm.stop()
+    io.output(pumpboard_standby, False)
 
 def rinse():
     startWater()
     time.sleep(5)
     stopWater()
 
-io.output(pumpboard_standby, False)
+
 
