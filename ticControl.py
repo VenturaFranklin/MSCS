@@ -41,13 +41,14 @@ def loadSettings():
   log("loading LA settings from file")
   ticcmd('--settings', settingFilePath + "tic_settings.txt")
   lasettings = settingFilePath + "LASettings.yaml"
-  #with open(lasettings, "r") as file:
-  # LAsettings = yaml.load(file, Loader=yaml.FullLoader)
+  with open(lasettings, "r") as file:
+      LAsettings = yaml.load(file, Loader=yaml.FullLoader)
 
 def exit_handler():
+  LAsettings["currentpos"] = pos
   lasettings = settingFilePath + "LASettings.yaml"
-  #with open(lasettings, "w") as file:
-  # LAsettings = yaml.dump(file, Loader=yaml.FullLoader)
+  with open(lasettings, "w") as file:
+      LAsettings = yaml.dump(file, Loader=yaml.FullLoader)
 
 # manually lowers the slide by a set step size, used to manually home the LA
 def down():
@@ -62,8 +63,10 @@ def goto(pos):
   ticcmd('--exit-safe-start', '--position', str(pos)) # execute ticcmd to goto
   LAsettings["currentpos"] = pos
   if manualFlag:
-      time.sleep(2)
+      time.sleep(3)
+      ticcmd('--halt-and-set-position', str(pos))
       return
+      
   while True: # wait loop to return only when the target position is achieved
     currentPosition = getPos()
     log("going to " + str(pos) + "currently at " + str(currentPosition))
@@ -76,8 +79,9 @@ def getPos():
       position = LAsettings["currentpos"]
   else:
       log("not manual")
-#       status = yaml.load(ticcmd('-s', '--full'))
-#       position = status['Current position']
+      print(ticcmd('-s', '--full'))
+      status = yaml.load(ticcmd('-s', '--full'))
+      position = status['Current position']
   log("getPos " + str(position))
   return position
   
@@ -101,6 +105,7 @@ def gotoTop():
     
 def calibrate():
   calibrateFlag = True
+  LAsettings["currentpos"] = calibratePos
   ticcmd('--halt-and-set-position', str(calibratePos))
 
 

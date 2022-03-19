@@ -32,7 +32,7 @@ peristaltic_pwm = io.PWM(peristaltic_pwm_num, 1000)
 
 #functions
 def dispenseSoap():
-    peristaltic_pwm.start(50)
+    peristaltic_pwm.start(100)
     io.output(pumpboard_standby, True)
     io.output(peristaltic1, True)
     io.output(peristaltic2, False)

@@ -19,11 +19,21 @@ def close_air():
     automationhat.relay.one.off()
 
 def open_gripper():
+    print("opening gripper")
     automationhat.relay.two.on()
     automationhat.relay.three.off()
 
+
 def close_gripper():
+    print("closing gripper")
     automationhat.relay.two.off()
     automationhat.relay.three.on()
+
+def turnoffAll_valves():
+    print("turning off all valves")
+    automationhat.relay.one.off()
+    automationhat.relay.two.off()
+    automationhat.relay.three.off()
+    
 
     

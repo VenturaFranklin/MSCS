@@ -32,7 +32,7 @@ waterpump_pwm = io.PWM(waterpump_pwm_num, 1000)
 
 #functions
 def startWater():
-    waterpump_pwm.start(50)
+    waterpump_pwm.start(80)
     io.output(pumpboard_standby, True)
     io.output(waterpump1, True)    
     io.output(waterpump2, False)

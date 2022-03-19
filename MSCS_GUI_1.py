@@ -13,6 +13,7 @@ from tkinter import filedialog #For accessing computers files
 import time
 from tracemalloc import start
 from turtle import up
+import atexit
 #import board
 #from adafruit_motorkit import MotorKit
 #import RPi.GPIO as GPIO
@@ -75,15 +76,27 @@ class MainClass(tk.Tk):                                      #BASELINE of code f
 
 
 #functions for stuff
-def stopClean():
-    print("stopped cleaning")
+# def stopMrClean():
+#     exit(mrClean)
+#     stopSoap()
+#     stopRollers()
+#     stopWater()
+#     closeAir()
+#     turnoffAll_valves()
+#     gotoTop()
+#     print("stopped cleaning")
+#     
+# def stopCleanWin():
+#     
+#     stopPopup = tk.Tk()
+#     stopPopup.title("Cleaning Initiated")
+#     button = tk.Button(stopPopup, text = "Stop Cleaning", width=10, height=10, command = stopMrClean)
+#     button.pack()
+#     stopPopup.mainloop()
+
 
 def mrClean():
-    cleanPopup = tk.Tk()
-    cleanPopup.title("Cleaning Initiated")
-    button = tk.Button(cleanPopup, text = "Stop", width=10, height=10, command = stopClean)
-    button.pack()
-
+    #stopCleanWin() #popup window for stop button
     # print ("Go to Home")
     # gotoHome()#calling to function in ticControl.py
    
@@ -93,7 +106,7 @@ def mrClean():
     
     print("Dispense Reagent")
     dispenseSoap() #calling to fxn in DispenseReagents.py
-    time.sleep(2)
+    time.sleep(5)
     stopSoap()
    
     print("Go to Home")
@@ -107,30 +120,36 @@ def mrClean():
   
     print("Rinse")
     startWater()#rinsing fxn from WaterPump.py #can change to just dispenseWater()
-    time.sleep(5)
+    time.sleep(3)
     stopWater()
     
     print("Open Air")
     open_air() #from OpenCloseAir.py
 
     print("DRYING OSCILLATE")
-    oscDry()
+    oscDry() #from ticControl.py
     
     print("close air")
-    close_air()
+    close_air() #from OpenCloseAir.py
     
     print("go to Top")
-    gotoTop()
+    gotoTop() #from ticControl.py
     
     print("done")
-    cleanPopup.mainloop()
+
+
 
 def browseFiles():
     filename = filedialog.askopenfilename(initialdir = "/") #opens and displays file explorer
       
 
+def main_exit_handler():
+    print("exiting")
+
 class StartPage(tk.Frame):                                 #The Start Page. tk.Frame inherits so we don't have to call.
     def __init__(self, parent, controller):
+        print("registering exit handler")
+        atexit.register(main_exit_handler)
         tk.Frame.__init__(self, parent)
         label = tk.Label(self, text="MSCS Main Page", font = LARGE_FONT) #class is tk.label() which creates the object = label. 
                                                              #LARGE_FONT defined at the top
@@ -138,6 +157,7 @@ class StartPage(tk.Frame):                                 #The Start Page. tk.F
 
         button1 = tk.Button(self, text="CLEAN", width =30, height=7, font=MED_FONT, command = mrClean)
         button1.pack()
+        
 
         button2 = tk.Button(self, text="Components", width =20, height=6, font=MED_FONT,
                             command = lambda: controller.show_frame(ComponentsPage)) 
@@ -269,6 +289,9 @@ class SolValPage(tk.Frame):
 
         button6 = tk.Button(self, text="Close Gripper", command = close_gripper)
         button6.pack()
+        
+        button7 = tk.Button(self, text="Turn Off All Valves", command = turnoffAll_valves)
+        button7.pack()
 
         button2 = tk.Button(self, text="Back to Pumps",                         
                             command = lambda: controller.show_frame(PumpsPage))
@@ -281,10 +304,15 @@ class SolValPage(tk.Frame):
 
 
 
-#where code starts running(i think)
+#where code starts running
 app = MainClass()
-app.geometry ("1000x500") #width x height
+app.geometry ("1000x500") #width x height of window
 app.mainloop()
+#closes air valves after exiting/shutting down main 
+print("Turning off All valves")
+automationhat.relay.one.off()
+automationhat.relay.two.off()
+automationhat.relay.three.off()
 
 
 
