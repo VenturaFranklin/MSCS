@@ -4,7 +4,7 @@
 #MSCS GUI MK1
 
 import sys
-#from multiprocessing import Process
+from multiprocessing import Process
 from threading import Thread
 
 #Import tkinter library
