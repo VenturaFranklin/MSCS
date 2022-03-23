@@ -46,3 +46,7 @@ This folder contains all files of code needed to run the GUI and control all the
 ## pin assignments
  - Variable assignments for Raspberry Pi pin numbers
  
+## Camera
+ ### Camera_Terminal_Test_Code.py
+ -Contains the code that allows us to take pictures with the camera and save it as a file.
+ -Also can create a new directory for the storage of the pictures.
