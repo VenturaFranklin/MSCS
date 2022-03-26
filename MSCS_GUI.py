@@ -2,7 +2,7 @@
 #Copyright @ 2022 Elijah Keeswood. All rights reserved.
 #Senior Design Team: 22010
 #MSCS GUI MK1
-
+DEBUG = True
 import sys
 from multiprocessing import Process
 from threading import Thread
@@ -23,17 +23,17 @@ import atexit
 #from adafruit_motorkit import MotorKit
 #import RPi.GPIO as GPIO
 
-##Imports for Automation Hat
-#import automationhat
-#import RPi.GPIO as io
-#from time import sleep
+#Imports for Automation Hat
+import automationhat
+import RPi.GPIO as io
+from time import sleep
 
-# #Accesses separate files in same folder and imports the file's imports
-# from ticControl import * #linear Actuator
-# from StartStopRollers import *
-# from DispenseReagent import * 
-# from WaterPump import * 
-# from OpenCloseAir import * 
+#Accesses separate files in same folder and imports the file's imports
+from ticControl import * #linear Actuator
+from StartStopRollers import *
+from DispenseReagent import * 
+from WaterPump import * 
+from OpenCloseAir import * 
 
 #Variables
 LARGE_FONT = ("Verdana", 20)
@@ -218,12 +218,12 @@ class RollersPage(tk.Frame):
         label = tk.Label(self, text = "Rollers", font = LARGE_FONT)
         label.pack(pady=10, padx=10)
         
-        # #start rollers
-        # button3 = tk.Button(self, text="Start", width =20, height=5, command = startRollers)
-        # button3.pack()
-        # #stop rollers
-        # button4 = tk.Button(self, text="Stop", width =20, height=5, command = stopRollers)
-        # button4.pack()
+        #start rollers
+        button3 = tk.Button(self, text="Start", width =20, height=5, command = startRollers)
+        button3.pack()
+        #stop rollers
+        button4 = tk.Button(self, text="Stop", width =20, height=5, command = stopRollers)
+        button4.pack()
 
         button2 = tk.Button(self, text="Components",                      
                             command = lambda: controller.show_frame(ComponentsPage))
