@@ -334,7 +334,3 @@ sys.exit()
 # automationhat.relay.one.off()
 # automationhat.relay.two.off()
 # automationhat.relay.three.off()
-
-
-
-
