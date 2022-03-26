@@ -5,7 +5,7 @@ import datetime as dt
 def before_pic(slide_num, Before_After):
   if Before_After is False:               #Check if the picture taken is the before or after cleaning picture
     pic_order = 'Before_';
-  elseif Before_After is True:
+  elif Before_After is True:
     pic_order = 'After_';
   pic_directory = '/home/pi/MSCS_Pics/';  #Directory to save the pictures in
   current_date = dt.date.today()          #Gets the current date
