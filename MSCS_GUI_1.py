@@ -56,7 +56,7 @@ class MainClass(tk.Tk):                                      #BASELINE of code f
 
         #####**********             When adding a new page just add it to this for loop list                    *******####
 
-        for F in (StartPage, ComponentsPage, RollersPage, LinActPage, PumpsPage, SolValPage):      
+        for F in (StartPage, ComponentsPage, RollersPage, LinActPage, PumpsPage, SolValPage, CameraPage):      
         #for Frame in startpage and page one, saves frame to self.frames{} dictionary. 
                                                     #So when def show_frame it shows current frame.      
             frame = F(container, self)  #pass through container and self
@@ -188,6 +188,10 @@ class ComponentsPage(tk.Frame):
                             command=lambda: controller.show_frame(PumpsPage))
         button4.pack()
 
+        button5 = tk.Button(self, text="Camera", width =20, height=5, font=MED_FONT,
+                            command=lambda: controller.show_frame(CameraPage))
+        button5.pack()
+
         button1 = tk.Button(self, text="Back to Home",                          #doesn't matter what button variable is called. its unique to class
                             command = lambda: controller.show_frame(StartPage)) 
         button1.pack()
@@ -295,6 +299,26 @@ class SolValPage(tk.Frame):
 
         button2 = tk.Button(self, text="Back to Pumps",                         
                             command = lambda: controller.show_frame(PumpsPage))
+        button2.pack()
+
+        button1 = tk.Button(self, text="Back to Home",                        
+                            command = lambda: controller.show_frame(StartPage))
+        button1.pack()
+
+class CameraPage(tk.Frame):
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self, parent)
+        label = tk.Label(self, text = "Camera", font = LARGE_FONT)
+        label.pack(pady=10, padx=10)
+
+        button3 = tk.Button(self, text="Take Picture", command = Take_Pic)
+        button3.pack()
+
+        button4 = tk.Button(self, text="Files", width =20, height=5, font=MED_FONT, command = browseFiles)
+        button4.pack()
+
+        button2 = tk.Button(self, text="Back to Components",                         
+                            command = lambda: controller.show_frame(ComponentsPage))
         button2.pack()
 
         button1 = tk.Button(self, text="Back to Home",                        
