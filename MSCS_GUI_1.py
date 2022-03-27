@@ -29,11 +29,12 @@ from StartStopRollers import *
 from DispenseReagent import * 
 from WaterPump import * 
 from OpenCloseAir import * 
+from Camera_Code import *
 
 #Variables
 LARGE_FONT = ("Verdana", 20)
 MED_FONT = ("Calibri", 15)
-
+pic_num = 0
 
 
 class MainClass(tk.Tk):                                      #BASELINE of code for creating and opening a page and moving from page to page
@@ -100,7 +101,10 @@ def mrClean():
     # print ("Go to Home")
     # gotoHome()#calling to function in ticControl.py
    
-    # print("take picture")
+    print("take before picture")
+    pic_num += 1
+    Take_Pic(pic_num, False) #calls to fxn in CameraCode.py
+
     print("Start Rollers")
     startRollers() #calling to fxn in StartRollers.py
     
@@ -134,6 +138,9 @@ def mrClean():
     
     print("go to Top")
     gotoTop() #from ticControl.py
+
+    print("take after picture")
+    Take_Pic(pic_num, True) #calls to fxn in CameraCode.py
     
     print("done")
 
@@ -311,7 +318,7 @@ class CameraPage(tk.Frame):
         label = tk.Label(self, text = "Camera", font = LARGE_FONT)
         label.pack(pady=10, padx=10)
 
-        button3 = tk.Button(self, text="Take Picture", command = Take_Pic)
+        button3 = tk.Button(self, text="Take Picture", command = Take_Test_Pic)
         button3.pack()
 
         button4 = tk.Button(self, text="Files", width =20, height=5, font=MED_FONT, command = browseFiles)
