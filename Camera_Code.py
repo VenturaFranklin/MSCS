@@ -11,7 +11,7 @@ def Take_Pic(slide_num, Before_After):    #Function to take the before and after
   current_date = dt.date.today()          #Gets the current date
   date = str(current_date);               #Turns the current date into a string variable for the picture filename
   file_type = '.jpg';                     #String for the picture file type   
-  st_Slide_num = '_' + str(Slide_num);    #Convert the slide number into a string
+  st_Slide_num = '_' + str(slide_num);    #Convert the slide number into a string
   Filename = pic_directory + date + pic_order + st_Slide_num + file_type    #Path and file name for the picture to be used in the take picture command
   os.system("libcamera-still -t 1000 -o " +Filename)  #System Command to take a picture with the camera
 

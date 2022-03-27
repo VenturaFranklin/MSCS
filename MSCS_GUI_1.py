@@ -100,7 +100,8 @@ def mrClean():
     #stopCleanWin() #popup window for stop button
     # print ("Go to Home")
     # gotoHome()#calling to function in ticControl.py
-   
+    global pic_num
+    
     print("take before picture")
     pic_num += 1
     Take_Pic(pic_num, False) #calls to fxn in CameraCode.py
