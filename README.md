@@ -50,3 +50,24 @@ This folder contains all files of code needed to run the GUI and control all the
  ### Camera_Terminal_Test_Code.py
  - Contains the code that allows us to take pictures with the camera and save it as a file.
  - Also can create a new directory for the storage of the pictures.
+ 
+# Setup Raspberry Pi
+Standard updates: 
+1. `sudo apt-get update`
+2. `sudo apt-get upgrade` 
+3. `sudo apt-get install python3-pip`
+4. `sudo pip3 install --upgrade setuptools`
+
+For installing board (https://learn.adafruit.com/circuitpython-on-raspberrypi-linux/installing-circuitpython-on-raspberry-pi):
+
+5. `cd ~`
+6. `sudo pip3 install --upgrade adafruit-python-shell`
+7. `wget https://raw.githubusercontent.com/adafruit/Raspberry-Pi-Installer-Scripts/master/raspi-blinka.py`
+8. `sudo python3 raspi-blinka.py`
+
+   8a. To check if blinka is installed, enter: `ls /dev/i2c* /dev/spi*`
+       You should see the response: `/dev/i2c-1 /dev/spidev0.0 /dev/spidev0.1`
+
+10. Install YAML for Linear Actuator: `python -m pip install PyYAML`
+11. Installing adafruit motor hat library: `sudo pip3 install adafruit-circuitpython-motorkit`
+13. Installing automation hat library: `curl https://get.pimoroni.com/automationhat | bash`
