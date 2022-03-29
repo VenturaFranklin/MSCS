@@ -50,6 +50,8 @@ This folder contains all files of code needed to run the GUI and control all the
  ### Camera_Terminal_Test_Code.py
  - Contains the code that allows us to take pictures with the camera and save it as a file.
  - Also can create a new directory for the storage of the pictures.
+ ### Camera_Code.py
+ - Contains the functions used to take a picture during the cleaning process and the code to control it using the camera component page of the GUI.
  
 # Setup Raspberry Pi
 Standard updates: 
