@@ -1,7 +1,7 @@
 #Created by Elijah Keeswood on 03/12/2022
 #MSCS GUI
 #Senior Design Team: 22010
-#Dispense Reagents code
+#Dispense Reagents Code
 
 import RPi.GPIO as io
 import time
@@ -31,7 +31,7 @@ peristaltic_pwm = io.PWM(peristaltic_pwm_num, 1000)
 
 
 #functions
-def dispenseSoap():
+def startSoap():
     peristaltic_pwm.start(100)
     io.output(pumpboard_standby, True)
     io.output(peristaltic1, True)
@@ -42,16 +42,6 @@ def stopSoap():
     peristaltic_pwm.stop()
     io.output(pumpboard_standby, False)
     
-def dispenseReagents(): #main
-    #start pwm
-    peristaltic_pwm.start(100)
-
-    #Main Process
-    dispenseSoap()
-    time.sleep(2)
-
-    #stop pwm
-    peristaltic_pwm.stop()
 
 
 
