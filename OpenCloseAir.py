@@ -3,13 +3,17 @@
 #Senior Design Team: 22010
 #Open Air code
 
-import RPi.GPIO as io
-import automationhat
-import time
+try: #tries to import 
+    import RPi.GPIO as io
+    import automationhat
+    import time
+except: #except when it doesn't give you any erros
+    pass
 
-
-if automationhat.is_automation_hat():
-    automationhat.light.power.write(1)
+def init (DEBUG):
+    if not DEBUG:
+        if automationhat.is_automation_hat():
+            automationhat.light.power.write(1)
 
 #functions for opening and closing valves
 def open_air():

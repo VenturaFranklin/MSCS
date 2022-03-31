@@ -2,31 +2,34 @@
 #MSCS GUI
 #Senior Design Team: 22010
 #Dispense Reagents Code
+try:
+    import RPi.GPIO as io
+    import time
+except: pass
 
-import RPi.GPIO as io
-import time
+def init (DEBUG):
+    if not DEBUG:
+        io.setmode(io.BCM)
 
-io.setmode(io.BCM)
+        #pin assignments
+        pumpboard_standby = 9
+        peristaltic_pwm_num = 22
 
-#pin assignments
-pumpboard_standby = 9
-peristaltic_pwm_num = 22
-
-peristaltic1 = 24
-peristaltic2 = 25
-
-
-#pin setups
-io.setwarnings(False)
-
-io.setup(peristaltic1, io.OUT)
-io.setup(peristaltic2, io.OUT)
+        peristaltic1 = 24
+        peristaltic2 = 25
 
 
-io.setup(pumpboard_standby, io.OUT)
-io.setup(peristaltic_pwm_num, io.OUT)
+        #pin setups
+        io.setwarnings(False)
 
-peristaltic_pwm = io.PWM(peristaltic_pwm_num, 1000)
+        io.setup(peristaltic1, io.OUT)
+        io.setup(peristaltic2, io.OUT)
+
+
+        io.setup(pumpboard_standby, io.OUT)
+        io.setup(peristaltic_pwm_num, io.OUT)
+
+        peristaltic_pwm = io.PWM(peristaltic_pwm_num, 1000)
 
 
 

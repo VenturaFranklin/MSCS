@@ -3,6 +3,7 @@
 #Senior Design Team: 22010
 #MSCS GUI
 
+import threading
 #Import tkinter library
 import tkinter as tk
 from tkinter import *
@@ -22,6 +23,8 @@ import DispenseReagent
 import WaterPump
 import OpenCloseAir 
 import Camera_Code
+
+running = True
 
 #Variables
 LARGE_FONT = ("Verdana", 20)
@@ -69,15 +72,16 @@ class MainClass(tk.Tk):                                      #BASELINE of code f
 
 
 #functions for stuff
-# def stopMrClean():
-#     exit(mrClean)
-#     stopSoap()
-#     stopRollers()
-#     stopWater()
-#     closeAir()
-#     turnoffAll_valves()
-#     gotoTop()
-#     print("stopped cleaning")
+def stopMrClean():
+    global running
+    running = False
+    # stopSoap()
+    # stopRollers()
+    # stopWater()
+    # closeAir()
+    # turnoffAll_valves()
+    # gotoTop()
+    # print("stopped cleaning")
 #     
 # def stopCleanWin():
 #     
@@ -87,27 +91,32 @@ class MainClass(tk.Tk):                                      #BASELINE of code f
 #     button.pack()
 #     stopPopup.mainloop()
 
+def mrCleanThread(message):
+    thread = threading.Thread(target = mrClean, args = (message,))
+    thread.start()
 
-def mrClean():
-    #stopCleanWin() #popup window for stop button
-    # print ("Go to Home")
-    # gotoHome()#calling to function in ticControl.py
+def mrClean(message):
     global pic_num
-    
-    print("take 'before' picture")
-    pic_num += 1 #Increases the count number for next image 
-    Camera_Code.Take_Pic(pic_num, False) #Camera Takes picture and sends as False to name as "before"
+    global running
 
-    print("Start Rollers")
-    StartStopRollers.startRollers() #Starts Rollers
-    
-    print("Dispense Reagent")
-    DispenseReagent.startSoap() #Dispenses soap
-    time.sleep(5)
-    DispenseReagent.stopSoap() #stops dispensing soap
-   
-    print("Go to Home")
-    ticControl.gotoHome() #Linear Actuator moves slide to home position or cleaning position
+
+    #stopCleanWin() #popup window for stop button
+
+    if running:
+        message.set("take 'before' picture")
+        pic_num += 1 #Increases the count number for next image 
+        Camera_Code.Take_Pic(pic_num, False) #Camera Takes picture and sends as False to name as "before"
+    if running:
+        print("Start Rollers")
+        StartStopRollers.startRollers() #Starts Rollers
+    if running:
+        print("Dispense Reagent")
+        DispenseReagent.startSoap() #Dispenses soap
+        time.sleep(5)
+        DispenseReagent.stopSoap() #stops dispensing soap
+    if running:
+        print("Go to Home")
+        ticControl.gotoHome() #Linear Actuator moves slide to home position or cleaning position
 
     print("CLEAN OSCILLATE")
     ticControl.oscClean() #Linear Actuator oscillates slide up and down between the rollers
@@ -155,9 +164,17 @@ class StartPage(tk.Frame):                                 #The Start Page. tk.F
                                                              #LARGE_FONT defined at the top
         label.pack(pady=10, padx=10) #pad puts padding on it. looks nice.
 
-        button1 = tk.Button(self, text="CLEAN", width =30, height=7, font=MED_FONT, command = mrClean)
+        message = tk.StringVar()   
+        mess = tk.Label(self, textvariable=message, font = MED_FONT) 
+        mess.pack(pady=10, padx=10) #pad puts padding on it. looks nice.
+        message.set("Click Clean to Start")                      
+       # message.pack(pady=10, padx=10)
+
+        button1 = tk.Button(self, text="CLEAN", width =30, height=7, font=MED_FONT, command = lambda: mrCleanThread(message))
         button1.pack()
         
+        button3 = tk.Button(self, text="STOP", width =30, height=7, font=MED_FONT, command = stopMrClean)
+        button3.pack()
 
         button2 = tk.Button(self, text="Components", width =20, height=6, font=MED_FONT,
                             command = lambda: controller.show_frame(ComponentsPage)) 

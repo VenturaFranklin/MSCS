@@ -3,38 +3,46 @@
 #Senior Design Team: 22010
 #Start Rollers
 
-import RPi.GPIO as io
+
 import time
-import board
-from adafruit_motorkit import MotorKit
 
-io.setmode(io.BCM)
-kit = MotorKit(i2c=board.I2C())
-#roller board standby pins
-roller_standby = 10
-#rollers A and B pwm pins
-rollerA_pwm = 17
-rollerB_pwm = 4
-#rollers A and B input output pins
-rollerA1 = 11
-rollerA2 = 0
-rollerB1 = 14
-rollerB2 = 15
+try: #Try importing these
+    import RPi.GPIO as io
+    import board
+    from adafruit_motorkit import MotorKit
 
-oldHatFlag = True
-#pin setups
-io.setwarnings(False)
+except: #except when it doensn't give you an error
+    pass
 
-io.setup(rollerA1, io.OUT)
-io.setup(rollerA2, io.OUT)
+def init(DEBUG):
+    if not DEBUG:    
+        io.setmode(io.BCM)
+        kit = MotorKit(i2c=board.I2C())
+        #roller board standby pins
+        roller_standby = 10
+        #rollers A and B pwm pins
+        rollerA_pwm = 17
+        rollerB_pwm = 4
+        #rollers A and B input output pins
+        rollerA1 = 11
+        rollerA2 = 0
+        rollerB1 = 14
+        rollerB2 = 15
 
-io.setup(roller_standby, io.OUT)
+        oldHatFlag = True
+        #pin setups
+        io.setwarnings(False)
 
-io.setup(rollerA_pwm, io.OUT)
-rollerA_pwm = io.PWM(rollerA_pwm, 1000)
+        io.setup(rollerA1, io.OUT)
+        io.setup(rollerA2, io.OUT)
 
-io.setup(rollerB_pwm, io.OUT)
-rollerB_pwm = io.PWM(rollerB_pwm, 1000)
+        io.setup(roller_standby, io.OUT)
+
+        io.setup(rollerA_pwm, io.OUT)
+        rollerA_pwm = io.PWM(rollerA_pwm, 1000)
+
+        io.setup(rollerB_pwm, io.OUT)
+        rollerB_pwm = io.PWM(rollerB_pwm, 1000)
 
 
 
@@ -55,17 +63,13 @@ def outwards():
     io.output(rollerB2, False)
 
 def startRollers():
-
     if oldHatFlag:
         kit.motor1.throttle = 1
         kit.motor2.throttle = -1
     else:
-
         #start pwm
-        
         rollerA_pwm.start(100)
         rollerB_pwm.start(100)
-
         #Main Process
         inwards()
         io.output(roller_standby, True)

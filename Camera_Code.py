@@ -1,8 +1,14 @@
+#Created by Dayton Brown
+#Senior Design Team 22010
+#Camera Code 
+
 import os
 import datetime as dt
-
+import time
 
 def Take_Pic(slide_num, Before_After):    #Function to take the before and after cleaning pics
+  #time.sleep(10) #Used for testing call to fxn in GUI. Probably just delete.
+  #return #this was for testing too
   if Before_After is False:               #Check if the picture taken is the before or after cleaning picture
     pic_order = 'Before_';
     #os.system("v4l2-ctl -c focus_abslute=570")

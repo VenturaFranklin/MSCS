@@ -1,33 +1,38 @@
 #Created by Elijah Keeswood on 03/12/2022
 #MSCS GUI
 #Senior Design Team: 22010
-#Start Water Pump code
+#Water Pump code
 
-import RPi.GPIO as io
-import time
+try:
+    import RPi.GPIO as io
+    import time
+except:
+    pass
 
-io.setwarnings(False)
-io.setmode(io.BCM)
+def init (DEBUG):
+    if not DEBUG:
+        io.setwarnings(False)
+        io.setmode(io.BCM)
 
-#pin assignments
-pumpboard_standby = 9
-waterpump_pwm_num = 27
+        #pin assignments
+        pumpboard_standby = 9
+        waterpump_pwm_num = 27
 
-waterpump1 = 23
-waterpump2 = 18
+        waterpump1 = 23
+        waterpump2 = 18
 
 
-#pin setups
-io.setwarnings(False)
+        #pin setups
+        io.setwarnings(False)
 
-io.setup(waterpump1, io.OUT)
-io.setup(waterpump2, io.OUT)
+        io.setup(waterpump1, io.OUT)
+        io.setup(waterpump2, io.OUT)
 
-io.setup(pumpboard_standby, io.OUT)
+        io.setup(pumpboard_standby, io.OUT)
 
-io.setup(waterpump_pwm_num, io.OUT)
+        io.setup(waterpump_pwm_num, io.OUT)
 
-waterpump_pwm = io.PWM(waterpump_pwm_num, 1000)
+        waterpump_pwm = io.PWM(waterpump_pwm_num, 1000)
 
 
 #functions

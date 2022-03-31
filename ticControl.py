@@ -1,3 +1,7 @@
+#Created by Richard Lu
+#Senior Design Team 22010
+#Linear Actuator Code 
+
 import subprocess
 import yaml
 import time
