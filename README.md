@@ -74,7 +74,7 @@ This folder contains all files of code needed to run the GUI and control all the
 (Steps 11-12 )For installing Linear Actuator: 
 
 11. `python -m pip install PyYAML`
-12. Follow instructions on: https://www.pololu.com/docs/0J71/3.1
+12. Follow instructions on https://www.pololu.com/docs/0J71/3.2 and install for Rasbperry Pi
 
-13. Installing adafruit motor hat library: `sudo pip3 install adafruit-circuitpython-motorkit`
-14. Installing automation hat library: `curl https://get.pimoroni.com/automationhat | bash`
+14. Installing adafruit motor hat library: `sudo pip3 install adafruit-circuitpython-motorkit`
+15. Installing automation hat library: `curl https://get.pimoroni.com/automationhat | bash`
