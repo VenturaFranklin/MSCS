@@ -72,6 +72,7 @@ This folder contains all files of code needed to run the GUI and control all the
        `/dev/i2c-1 /dev/spidev0.0 /dev/spidev0.1`
 
 (Steps 11-12 )For installing Linear Actuator: 
+
 11. `python -m pip install PyYAML`
 12. Follow instructions on: https://www.pololu.com/docs/0J71/3.1
 
