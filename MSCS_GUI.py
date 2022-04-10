@@ -158,6 +158,7 @@ def main_exit_handler():
 class StartPage(tk.Frame):                                 #The Start Page. tk.Frame inherits so we don't have to call.
     def __init__(self, parent, controller):
         print("registering exit handler")
+        StartStopRollers.init(False)
         atexit.register(main_exit_handler)
         tk.Frame.__init__(self, parent)
         label = tk.Label(self, text="MSCS Main Page", font = LARGE_FONT) #class is tk.label() which creates the object = label. 

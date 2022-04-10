@@ -5,6 +5,9 @@
 
 
 import time
+DEBUG = False
+oldHatFlag = True
+
 
 try: #Try importing these
     import RPi.GPIO as io
@@ -14,10 +17,12 @@ try: #Try importing these
 except: #except when it doensn't give you an error
     pass
 
+kit = MotorKit(i2c=board.I2C())
+
 def init(DEBUG):
     if not DEBUG:    
         io.setmode(io.BCM)
-        kit = MotorKit(i2c=board.I2C())
+        
         #roller board standby pins
         roller_standby = 10
         #rollers A and B pwm pins

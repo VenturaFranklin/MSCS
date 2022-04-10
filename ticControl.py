@@ -7,7 +7,7 @@ import yaml
 import time
 import atexit
 
-manualFlag = True
+manualFlag = False
 
 settingFilePath = "/home/pi/MSCS/" # where the settings are located, this still needs to be checked
 debugFlag = True
@@ -17,6 +17,7 @@ homePos = 23000 # position of slide right above rollers, in front of camera
 upPos = 27000 # top most position of slide
 downPos = 15000 # bottom most position of slide
 calStepSize = 1000 # step size for manual calibration / homing
+calibrateCurrent = 500 # current limit to safely home the LA
 LAsettings = {
   "currentpos": 27000,
   "homepos": 23000,
@@ -84,7 +85,7 @@ def getPos():
   else:
       log("not manual")
       print(ticcmd('-s', '--full'))
-      status = yaml.load(ticcmd('-s', '--full'))
+      status = yaml.load(ticcmd('-s', '--full'), Loader=yaml.FullLoader)
       position = status['Current position']
   log("getPos " + str(position))
   return position
@@ -108,9 +109,12 @@ def gotoTop():
     goto(LAsettings["uppos"])
     
 def calibrate():
-  calibrateFlag = True
-  LAsettings["currentpos"] = calibratePos
-  ticcmd('--halt-and-set-position', str(calibratePos))
+    if manualFlag:
+        calibrateFlag = True
+        LAsettings["currentpos"] = calibratePos
+        ticcmd('--halt-and-set-position', str(calibratePos))
+    else:
+        ticcmd('--current', str(calibrateCurrent))
 
-
+getPos()
 
