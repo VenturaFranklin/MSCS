@@ -19,36 +19,64 @@ except: #except when it doensn't give you an error
 
 kit = MotorKit(i2c=board.I2C())
 
-def init(DEBUG):
-    if not DEBUG:    
-        io.setmode(io.BCM)
+io.setmode(io.BCM)
         
-        #roller board standby pins
-        roller_standby = 10
-        #rollers A and B pwm pins
-        rollerA_pwm = 17
-        rollerB_pwm = 4
-        #rollers A and B input output pins
-        rollerA1 = 11
-        rollerA2 = 0
-        rollerB1 = 14
-        rollerB2 = 15
+#roller board standby pins
+roller_standby = 10
+#rollers A and B pwm pins
+rollerA_pwm = 17
+rollerB_pwm = 4
+#rollers A and B input output pins
+rollerA1 = 11
+rollerA2 = 0
+rollerB1 = 14
+rollerB2 = 15
 
-        oldHatFlag = True
-        #pin setups
-        io.setwarnings(False)
+oldHatFlag = True
+#pin setups
+io.setwarnings(False)
 
-        io.setup(rollerA1, io.OUT)
-        io.setup(rollerA2, io.OUT)
+io.setup(rollerA1, io.OUT)
+io.setup(rollerA2, io.OUT)
 
-        io.setup(roller_standby, io.OUT)
+io.setup(roller_standby, io.OUT)
 
-        io.setup(rollerA_pwm, io.OUT)
-        rollerA_pwm = io.PWM(rollerA_pwm, 1000)
+io.setup(rollerA_pwm, io.OUT)
+rollerA_pwm = io.PWM(rollerA_pwm, 1000)
 
-        io.setup(rollerB_pwm, io.OUT)
-        rollerB_pwm = io.PWM(rollerB_pwm, 1000)
+io.setup(rollerB_pwm, io.OUT)
+rollerB_pwm = io.PWM(rollerB_pwm, 1000)
 
+# def init(DEBUG):
+#     if not DEBUG:    
+#         io.setmode(io.BCM)
+#         
+#         #roller board standby pins
+#         roller_standby = 10
+#         #rollers A and B pwm pins
+#         rollerA_pwm = 17
+#         rollerB_pwm = 4
+#         #rollers A and B input output pins
+#         rollerA1 = 11
+#         rollerA2 = 0
+#         rollerB1 = 14
+#         rollerB2 = 15
+# 
+#         oldHatFlag = True
+#         #pin setups
+#         io.setwarnings(False)
+# 
+#         io.setup(rollerA1, io.OUT)
+#         io.setup(rollerA2, io.OUT)
+# 
+#         io.setup(roller_standby, io.OUT)
+# 
+#         io.setup(rollerA_pwm, io.OUT)
+#         rollerA_pwm = io.PWM(rollerA_pwm, 1000)
+# 
+#         io.setup(rollerB_pwm, io.OUT)
+#         rollerB_pwm = io.PWM(rollerB_pwm, 1000)
+# 
 
 
 

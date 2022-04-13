@@ -39,5 +39,4 @@ def turnoffAll_valves():
     automationhat.relay.two.off()
     automationhat.relay.three.off()
     
-
     

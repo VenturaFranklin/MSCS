@@ -7,29 +7,49 @@ try:
     import time
 except: pass
 
-def init (DEBUG):
-    if not DEBUG:
-        io.setmode(io.BCM)
+#pin assignments
+pumpboard_standby = 9
+peristaltic_pwm_num = 22
 
-        #pin assignments
-        pumpboard_standby = 9
-        peristaltic_pwm_num = 22
-
-        peristaltic1 = 24
-        peristaltic2 = 25
+peristaltic1 = 24
+peristaltic2 = 25
 
 
-        #pin setups
-        io.setwarnings(False)
+#pin setups
+io.setwarnings(False)
 
-        io.setup(peristaltic1, io.OUT)
-        io.setup(peristaltic2, io.OUT)
+io.setup(peristaltic1, io.OUT)
+io.setup(peristaltic2, io.OUT)
 
 
-        io.setup(pumpboard_standby, io.OUT)
-        io.setup(peristaltic_pwm_num, io.OUT)
+io.setup(pumpboard_standby, io.OUT)
+io.setup(peristaltic_pwm_num, io.OUT)
 
-        peristaltic_pwm = io.PWM(peristaltic_pwm_num, 1000)
+peristaltic_pwm = io.PWM(peristaltic_pwm_num, 1000)
+# 
+# def init (DEBUG):
+#     if not DEBUG:
+#         io.setmode(io.BCM)
+# 
+#         #pin assignments
+#         pumpboard_standby = 9
+#         peristaltic_pwm_num = 22
+# 
+#         peristaltic1 = 24
+#         peristaltic2 = 25
+# 
+# 
+#         #pin setups
+#         io.setwarnings(False)
+# 
+#         io.setup(peristaltic1, io.OUT)
+#         io.setup(peristaltic2, io.OUT)
+# 
+# 
+#         io.setup(pumpboard_standby, io.OUT)
+#         io.setup(peristaltic_pwm_num, io.OUT)
+# 
+#         peristaltic_pwm = io.PWM(peristaltic_pwm_num, 1000)
 
 
 

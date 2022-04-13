@@ -75,13 +75,13 @@ class MainClass(tk.Tk):                                      #BASELINE of code f
 def stopMrClean():
     global running
     running = False
-    # stopSoap()
-    # stopRollers()
-    # stopWater()
-    # closeAir()
-    # turnoffAll_valves()
-    # gotoTop()
-    # print("stopped cleaning")
+    DispenseReagent.stopSoap()
+    StartStopRollers.stopRollers()
+    WaterPump.stopWater()
+    OpenCloseAir.closeAir()
+    OpenCloseAir.turnoffAll_valves()
+    ticControl.gotoTop() #doesnt go to top at end
+    message.set("stopped all processess") #doesn't  display message
 #     
 # def stopCleanWin():
 #     
@@ -99,52 +99,65 @@ def mrClean(message):
     global pic_num
     global running
 
+    if not running:
+        return
 
     #stopCleanWin() #popup window for stop button
 
-    if running:
-        message.set("take 'before' picture")
-        pic_num += 1 #Increases the count number for next image 
-        Camera_Code.Take_Pic(pic_num, False) #Camera Takes picture and sends as False to name as "before"
-    if running:
-        print("Start Rollers")
-        StartStopRollers.startRollers() #Starts Rollers
-    if running:
-        print("Dispense Reagent")
-        DispenseReagent.startSoap() #Dispenses soap
-        time.sleep(5)
-        DispenseReagent.stopSoap() #stops dispensing soap
-    if running:
-        print("Go to Home")
-        ticControl.gotoHome() #Linear Actuator moves slide to home position or cleaning position
+    try:
+#         if running:
+#             message.set("take 'before' picture")
+#             pic_num += 1 #Increases the count number for next image 
+#             Camera_Code.Take_Pic(pic_num, False) #Camera Takes picture and sends as False to name as "before"
+        if running:
+            message.set("Start Rollers")
+            StartStopRollers.startRollers() #Starts Rollers
+        if running:
+            message.set("Dispense Reagent")
+            DispenseReagent.startSoap() #Dispenses soap
+            time.sleep(5)
+            DispenseReagent.stopSoap() #stops dispensing soap
+        if running:
+            message.set("Go to Home")
+            ticControl.gotoHome() #Linear Actuator moves slide to home position or cleaning position
+        if running:
+            message.set("CLEAN OSCILLATE")
+            ticControl.oscClean() #Linear Actuator oscillates slide up and down between the rollers
+        if running:
+            message.set("Rollers off")
+            StartStopRollers.stopRollers() #stops rollers
+        if running:  
+            message.set("Rinse")
+            WaterPump.startWater() #Dispenses Water
+            time.sleep(3)
+            WaterPump.stopWater() #stops dispensing water
+        if running:    
+            message.set("Open Air")
+            OpenCloseAir.open_air() #Opens the drying air valve
+        if running:
+            message.set("DRYING OSCILLATE")
+            ticControl.oscDry() #Linear Actuator moves slide up slowly between the drying air nozzles
+        if running:    
+            message.set("close air")
+            OpenCloseAir.close_air() #Closes drying air valve
+            
+            message.set("Go to Top")
+            ticControl.gotoTop() #Linear Actuator moves slide up to top
+            message.set("Done Cleaning")
 
-    print("CLEAN OSCILLATE")
-    ticControl.oscClean() #Linear Actuator oscillates slide up and down between the rollers
-
-    print("Rollers off")
-    StartStopRollers.stopRollers() #stops rollers
-  
-    print("Rinse")
-    WaterPump.startWater() #Dispenses Water
-    time.sleep(3)
-    WaterPump.stopWater() #stops dispensing water
+#         print("take 'after' picture")
+#         Camera_Code.Take_Pic(pic_num, True) #Camera Takes picture and sends as True to name as "after"
+        
+        
     
-    print("Open Air")
-    OpenCloseAir.open_air() #Opens the drying air valve
-
-    print("DRYING OSCILLATE")
-    ticControl.oscDry() #Linear Actuator moves slide up slowly between the drying air nozzles
+    # in case an error is thrown, do this
+    except:
+        print("error thrown")
+        
+    # then after code is run, no matter what, do this. i.e stop all systems
+    finally:
+        print("finished running ")
     
-    print("close air")
-    OpenCloseAir.close_air() #Closes drying air valve
-    
-    print("go to Top")
-    ticControl.gotoTop() #Linear Actuator moves slide up to top
-
-    print("take 'after' picture")
-    Camera_Code.Take_Pic(pic_num, True) #Camera Takes picture and sends as True to name as "after"
-    
-    print("done")
 
 
 
@@ -158,7 +171,7 @@ def main_exit_handler():
 class StartPage(tk.Frame):                                 #The Start Page. tk.Frame inherits so we don't have to call.
     def __init__(self, parent, controller):
         print("registering exit handler")
-        StartStopRollers.init(False)
+        # StartStopRollers.init(False)
         atexit.register(main_exit_handler)
         tk.Frame.__init__(self, parent)
         label = tk.Label(self, text="MSCS Main Page", font = LARGE_FONT) #class is tk.label() which creates the object = label. 

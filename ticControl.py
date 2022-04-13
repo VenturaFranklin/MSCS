@@ -7,7 +7,7 @@ import yaml
 import time
 import atexit
 
-manualFlag = False
+manualFlag = True
 
 settingFilePath = "/home/pi/MSCS/" # where the settings are located, this still needs to be checked
 debugFlag = True
@@ -31,6 +31,12 @@ def start():
   loadSettings()
   ticcmd("--exit-safe-start")
   ticcmd('--halt-and-set-position', str(LAsettings["currentpos"]))
+
+def onStop():
+    pass
+    
+def throwError():
+    pass
 
 def log(msg):
   if debugFlag:
