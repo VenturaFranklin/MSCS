@@ -27,10 +27,11 @@ import Camera_Code
 running = True
 
 #Variables
-LARGE_FONT = ("Verdana", 20)
-MED_FONT = ("Calibri", 15)
+LARGE_FONT = ("Verdana", 40)
+MED_FONT = ("Calibri", 30)
+SMALL_FONT= ("Calibri", 20)
 pic_num = 0
-
+mainthread = None
 
 class MainClass(tk.Tk):                                      #BASELINE of code for creating and opening a page and moving from page to page
                          #Sea of BTC app is just business, can define as anything, changed to Main class
@@ -72,16 +73,17 @@ class MainClass(tk.Tk):                                      #BASELINE of code f
 
 
 #functions for stuff
-def stopMrClean():
+def stopMrClean(message):
     global running
     running = False
     DispenseReagent.stopSoap()
     StartStopRollers.stopRollers()
     WaterPump.stopWater()
-    OpenCloseAir.closeAir()
+    OpenCloseAir.close_air()
     OpenCloseAir.turnoffAll_valves()
-    ticControl.gotoTop() #doesnt go to top at end
-    message.set("stopped all processess") #doesn't  display message
+    ticControl.goto(ticControl.getPos()) # don't move the linear actuator
+    message.set("stopped all processess")
+    running = True
 #     
 # def stopCleanWin():
 #     
@@ -92,8 +94,22 @@ def stopMrClean():
 #     stopPopup.mainloop()
 
 def mrCleanThread(message):
-    thread = threading.Thread(target = mrClean, args = (message,))
-    thread.start()
+    mainthread = threading.Thread(target = mrClean, args = (message,))
+    mainthread.start()
+    errorThread = threading.Thread(target = errorHandler, args = (mainthread,), daemon=True)
+    errorThread.start()
+    
+
+# this function is the thread that watches for linear actuator errors, in case of error,
+# the cleaning process should be stopped
+def errorHandler(thread):
+    print("main error thread started")
+    while True:
+        if ticControl.hasError():
+            print("error detected")
+            # houston we have a problem
+            stopMrClean()
+        time.sleep(0.1)
 
 def mrClean(message):
     global pic_num
@@ -115,22 +131,31 @@ def mrClean(message):
         if running:
             message.set("Dispense Reagent")
             DispenseReagent.startSoap() #Dispenses soap
-            time.sleep(5)
+            time.sleep(1)
             DispenseReagent.stopSoap() #stops dispensing soap
         if running:
             message.set("Go to Home")
             ticControl.gotoHome() #Linear Actuator moves slide to home position or cleaning position
+
         if running:
             message.set("CLEAN OSCILLATE")
-            ticControl.oscClean() #Linear Actuator oscillates slide up and down between the rollers
-        if running:
-            message.set("Rollers off")
-            StartStopRollers.stopRollers() #stops rollers
+            #Linear Actuator oscillates slide up and down between the rollers
+            ticControl.goto(6600)
+            ticControl.goto(16250)
+            ticControl.goto(6600)
+            ticControl.goto(16250)
+            ticControl.goto(6600)
+            ticControl.goto(16250)
         if running:  
             message.set("Rinse")
             WaterPump.startWater() #Dispenses Water
-            time.sleep(3)
+            ticControl.goto(6600)#goes down
+        if running:
+            ticControl.gotoHome()#goes to home position above rollers
             WaterPump.stopWater() #stops dispensing water
+        if running:
+            message.set("Rollers off")
+            StartStopRollers.stopRollers() #stops rollers
         if running:    
             message.set("Open Air")
             OpenCloseAir.open_air() #Opens the drying air valve
@@ -141,8 +166,8 @@ def mrClean(message):
             message.set("close air")
             OpenCloseAir.close_air() #Closes drying air valve
             
-            message.set("Go to Top")
-            ticControl.gotoTop() #Linear Actuator moves slide up to top
+            message.set("Go to Home")
+            ticControl.gotoHome() #Linear Actuator moves slide up to top
             message.set("Done Cleaning")
 
 #         print("take 'after' picture")
@@ -174,31 +199,39 @@ class StartPage(tk.Frame):                                 #The Start Page. tk.F
         # StartStopRollers.init(False)
         atexit.register(main_exit_handler)
         tk.Frame.__init__(self, parent)
+        
         label = tk.Label(self, text="MSCS Main Page", font = LARGE_FONT) #class is tk.label() which creates the object = label. 
                                                              #LARGE_FONT defined at the top
-        label.pack(pady=10, padx=10) #pad puts padding on it. looks nice.
+        label.grid(row=0, column=500, pady=10, padx=10) #pad puts padding on it. looks nice.
 
         message = tk.StringVar()   
         mess = tk.Label(self, textvariable=message, font = MED_FONT) 
-        mess.pack(pady=10, padx=10) #pad puts padding on it. looks nice.
-        message.set("Click Clean to Start")                      
-       # message.pack(pady=10, padx=10)
-
-        button1 = tk.Button(self, text="CLEAN", width =30, height=7, font=MED_FONT, command = lambda: mrCleanThread(message))
-        button1.pack()
+        mess.grid(row=1, column=500)
+                            
+    
+        button1 = tk.Button(self, text="CLEAN", width =20, height=10, font=MED_FONT, command = lambda: mrCleanThread(message))
+        button1.grid(row=1, column=700)
         
-        button3 = tk.Button(self, text="STOP", width =30, height=7, font=MED_FONT, command = stopMrClean)
-        button3.pack()
+        button3 = tk.Button(self, text="STOP", width =15, height=7, font=MED_FONT, command = stopMrClean(message))
+        button3.grid(row=2, column=700)
+        
+        button5 = tk.Button(self, text="Open Gripper", width=10, height=6, font=MED_FONT, command = OpenCloseAir.open_gripper)
+        button5.grid(row=1, column=800)
 
-        button2 = tk.Button(self, text="Components", width =20, height=6, font=MED_FONT,
+        button6 = tk.Button(self, text="Close Gripper", width=10, height=6, font=MED_FONT, command = OpenCloseAir.close_gripper)
+        button6.grid(row=2, column=800)
+
+        button2 = tk.Button(self, text="Components", width =15, height=6, font=MED_FONT,
                             command = lambda: controller.show_frame(ComponentsPage)) 
                                      #lambda creates a quick throwaway fxn. Only here when we call it.
                                      #can also pass variables through; command = lambda: fxn("sus")
                                                                    #ComponentsPage is a class                        
-        button2.pack()
+        button2.grid(row=1, column=0)
         
-        button4 = tk.Button(self, text="Files", width =20, height=5, font=MED_FONT, command = browseFiles) #calls to browse files explorer
-        button4.pack()
+        button4 = tk.Button(self, text="Files", width =10, height=3, font=MED_FONT, command = browseFiles) #calls to browse files explorer
+        button4.grid(row=2, column=0)
+        
+        message.set("Click Clean to Start")  
 
 
 class ComponentsPage(tk.Frame):
@@ -207,23 +240,23 @@ class ComponentsPage(tk.Frame):
         label = tk.Label(self, text = "Components", font = LARGE_FONT)
         label.pack(pady=10, padx=10)
 
-        button2 = tk.Button(self, text="Rollers", width =20, height=5,font=MED_FONT,
+        button2 = tk.Button(self, text="Rollers", width =15, height=3,font=MED_FONT,
                             command=lambda: controller.show_frame(RollersPage))
         button2.pack()
 
-        button3= tk.Button(self, text="Linear Actuator",width =20, height=5, font=MED_FONT,
+        button3= tk.Button(self, text="Linear Actuator",width =15, height=3, font=MED_FONT,
                             command=lambda: controller.show_frame(LinActPage))
         button3.pack()
 
-        button4 = tk.Button(self, text="Pumps", width =20, height=5, font=MED_FONT,
+        button4 = tk.Button(self, text="Pumps", width =15, height=3, font=MED_FONT,
                             command=lambda: controller.show_frame(PumpsPage))
         button4.pack()
 
-        button5 = tk.Button(self, text="Camera", width =20, height=5, font=MED_FONT,
+        button5 = tk.Button(self, text="Camera", width =15, height=3, font=MED_FONT,
                             command=lambda: controller.show_frame(CameraPage))
         button5.pack()
 
-        button1 = tk.Button(self, text="Back to Home",                          #doesn't matter what button variable is called. its unique to class
+        button1 = tk.Button(self, text="Back to Home", width=10, height=3, font=SMALL_FONT,  #doesn't matter what button variable is called. its unique to class
                             command = lambda: controller.show_frame(StartPage)) 
         button1.pack()
 
@@ -235,17 +268,17 @@ class RollersPage(tk.Frame):
         label.pack(pady=10, padx=10)
         
         #start rollers
-        button3 = tk.Button(self, text="Start", width =20, height=5, command = StartStopRollers.startRollers)
+        button3 = tk.Button(self, text="Start", width =20, height=5, font=MED_FONT, command = StartStopRollers.startRollers)
         button3.pack()
         #stop rollers
-        button4 = tk.Button(self, text="Stop", width =20, height=5, command = StartStopRollers.stopRollers)
+        button4 = tk.Button(self, text="Stop", width =20, height=5, font=MED_FONT, command = StartStopRollers.stopRollers)
         button4.pack()
 
-        button2 = tk.Button(self, text="Components",                      
+        button2 = tk.Button(self, text="Components",  width=10, height=3, font=SMALL_FONT,                     
                             command = lambda: controller.show_frame(ComponentsPage))
         button2.pack()
 
-        button1 = tk.Button(self, text="Back to Home",                         
+        button1 = tk.Button(self, text="Back to Home", width=10, height=3, font=SMALL_FONT,                        
                             command = lambda: controller.show_frame(StartPage))
         button1.pack()
 
@@ -267,11 +300,11 @@ class LinActPage(tk.Frame):
         button6 = tk.Button(self, text="Down", width =20, height=5, command = ticControl.down)
         button6.pack()
 
-        button2 = tk.Button(self, text="Back to Components",                       
+        button2 = tk.Button(self, text="Back to Components", width=10, height=3, font=SMALL_FONT,                       
                             command = lambda: controller.show_frame(ComponentsPage))
         button2.pack()
 
-        button1 = tk.Button(self, text="Back to Home",         
+        button1 = tk.Button(self, text="Back to Home", width=10, height=3, font=SMALL_FONT,         
                             command = lambda: controller.show_frame(StartPage))
         button1.pack()
 
@@ -281,27 +314,27 @@ class PumpsPage(tk.Frame):
         label = tk.Label(self, text = "Pumps", font = LARGE_FONT)
         label.pack(pady=10, padx=10)
 
-        button3 = tk.Button(self, text="Solenoid Valves",width=20, height=5, font=MED_FONT,                       
+        button3 = tk.Button(self, text="Solenoid Valves",width=10, height=2, font=MED_FONT,                       
                             command = lambda: controller.show_frame(SolValPage))
         button3.pack()
         
-        button4 = tk.Button(self, text="Start Soap", command = DispenseReagent.startSoap)
+        button4 = tk.Button(self, text="Start Soap", width =10, height=2, font=MED_FONT, command = DispenseReagent.startSoap)
         button4.pack()
         
-        button5 = tk.Button(self, text="Stop Soap", command = DispenseReagent.stopSoap)
+        button5 = tk.Button(self, text="Stop Soap", width =10, height=2, font=MED_FONT, command = DispenseReagent.stopSoap)
         button5.pack()
 
-        button6 = tk.Button(self, text="Start Water", command = WaterPump.startWater)
+        button6 = tk.Button(self, text="Start Water", width =10, height=2, font=MED_FONT, command = WaterPump.startWater)
         button6.pack()
         
-        button6 = tk.Button(self, text="Stop Water", command = WaterPump.stopWater)
+        button6 = tk.Button(self, text="Stop Water", width =10, height=2, font=MED_FONT, command = WaterPump.stopWater)
         button6.pack()
 
-        button2 = tk.Button(self, text="Back to Components",                         
+        button2 = tk.Button(self, text="Back to Components", width=10, height=2, font=SMALL_FONT,                        
                             command = lambda: controller.show_frame(ComponentsPage))
         button2.pack()
 
-        button1 = tk.Button(self, text="Back to Home",                        
+        button1 = tk.Button(self, text="Back to Home", width=10, height=2, font=SMALL_FONT,                       
                             command = lambda: controller.show_frame(StartPage))
         button1.pack()
 
@@ -312,26 +345,26 @@ class SolValPage(tk.Frame):
         label = tk.Label(self, text = "Solenoid Valves", font = LARGE_FONT)
         label.pack(pady=10, padx=10)
 
-        button3 = tk.Button(self, text="Open Air", command = OpenCloseAir.open_air)
+        button3 = tk.Button(self, text="Open Air", width =10, height=2, font=MED_FONT, command = OpenCloseAir.open_air)
         button3.pack()
         
-        button4 = tk.Button(self, text="Close Air", command = OpenCloseAir.close_air)
+        button4 = tk.Button(self, text="Close Air", width =10, height=2, font=MED_FONT, command = OpenCloseAir.close_air)
         button4.pack()
         
-        button5 = tk.Button(self, text="Open Gripper", command = OpenCloseAir.open_gripper)
+        button5 = tk.Button(self, text="Open Gripper", width =10, height=2, font=MED_FONT, command = OpenCloseAir.open_gripper)
         button5.pack()
 
-        button6 = tk.Button(self, text="Close Gripper", command = OpenCloseAir.close_gripper)
+        button6 = tk.Button(self, text="Close Gripper", width =10, height=2, font=MED_FONT, command = OpenCloseAir.close_gripper)
         button6.pack()
         
-        button7 = tk.Button(self, text="Turn Off All Valves", command = OpenCloseAir.turnoffAll_valves)
+        button7 = tk.Button(self, text="Turn Off All Valves", width =15, height=2, font=MED_FONT, command = OpenCloseAir.turnoffAll_valves)
         button7.pack()
 
-        button2 = tk.Button(self, text="Back to Pumps",                         
+        button2 = tk.Button(self, text="Back to Pumps", width=10, height=2, font=SMALL_FONT,                         
                             command = lambda: controller.show_frame(PumpsPage))
         button2.pack()
 
-        button1 = tk.Button(self, text="Back to Home",                        
+        button1 = tk.Button(self, text="Back to Home",  width=10, height=2, font=SMALL_FONT,                       
                             command = lambda: controller.show_frame(StartPage))
         button1.pack()
 
@@ -341,26 +374,24 @@ class CameraPage(tk.Frame):
         label = tk.Label(self, text = "Camera", font = LARGE_FONT)
         label.pack(pady=10, padx=10)
 
-        button3 = tk.Button(self, text="Take Picture", command = Camera_Code.Take_Test_Pic) #Takes test image labelled as test
+        button3 = tk.Button(self, text="Take Picture", width =20, height=5, font=MED_FONT, command = Camera_Code.Take_Test_Pic) #Takes test image labelled as test
         button3.pack()
 
         button4 = tk.Button(self, text="Files", width =20, height=5, font=MED_FONT, command = browseFiles)
         button4.pack()
 
-        button2 = tk.Button(self, text="Back to Components",                         
+        button2 = tk.Button(self, text="Back to Components", width=10, height=3, font=SMALL_FONT,                        
                             command = lambda: controller.show_frame(ComponentsPage))
         button2.pack()
 
-        button1 = tk.Button(self, text="Back to Home",                        
+        button1 = tk.Button(self, text="Back to Home", width=10, height=3, font=SMALL_FONT,                        
                             command = lambda: controller.show_frame(StartPage))
         button1.pack()
-
-
-
+        
 
 #where code starts running
-app = MainClass()
-app.geometry ("1000x500") #width x height of window
+app=MainClass()
+app.geometry("800x800") #width x height of window
 app.mainloop()
 
 #closes air valves after exiting/shutting down main 

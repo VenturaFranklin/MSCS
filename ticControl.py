@@ -6,8 +6,9 @@ import subprocess
 import yaml
 import time
 import atexit
+import threading
 
-manualFlag = True
+manualFlag = False
 
 settingFilePath = "/home/pi/MSCS/" # where the settings are located, this still needs to be checked
 debugFlag = True
@@ -18,25 +19,54 @@ upPos = 27000 # top most position of slide
 downPos = 15000 # bottom most position of slide
 calStepSize = 1000 # step size for manual calibration / homing
 calibrateCurrent = 500 # current limit to safely home the LA
+errorFlag = None
+errorMessage = "No Error Currently"
 LAsettings = {
   "currentpos": 27000,
-  "homepos": 23000,
+  "homepos": 19300,
   "uppos": 27000,
-  "downpos": 15000,
+  "downpos": 6600,
 } # dictionary for variable storage to file
 
 def start():
+  errorFlag = False
   atexit.register(exit_handler)
   log("starting linear actuator")
+  ticcmd("--energize")
   loadSettings()
   ticcmd("--exit-safe-start")
-  ticcmd('--halt-and-set-position', str(LAsettings["currentpos"]))
+  ticcmd('--halt-and-set-position', str(LAsettings["homepos"]))
+  errorThread = threading.Thread(target = errorWatch, args = (), daemon=True)
+  errorThread.start()
+  
+def errorWatch():
+    errors = ["Low VIN"]
+    while True:
+        status = yaml.load(ticcmd('-s', '--full'), Loader=yaml.FullLoader)
+        issues = status["Errors currently stopping the motor"]
+        for issue in issues:
+            if issue in errors:
+                # houston we have a problem
+                throwError(issue)
+                return
+        time.sleep(0.1)
+
 
 def onStop():
     pass
     
-def throwError():
-    pass
+def throwError(message):
+    global errorFlag
+    errorMessage = "ERROR: " + message
+    print(errorMessage)
+    errorFlag = True
+    return
+
+def hasError():
+    return errorFlag
+
+def getErrorMessage():
+    return errorMessage
 
 def log(msg):
   if debugFlag:
@@ -77,11 +107,12 @@ def goto(pos):
       time.sleep(3)
       ticcmd('--halt-and-set-position', str(pos))
       return
-      
+  
   while True: # wait loop to return only when the target position is achieved
+    ticcmd('--reset-command-timeout')
     currentPosition = getPos()
     log("going to " + str(pos) + "currently at " + str(currentPosition))
-    if currentPosition == pos:
+    if abs(currentPosition - pos) < 10:
       return
     time.sleep(0.1)
 
@@ -97,11 +128,14 @@ def getPos():
   return position
   
 def oscClean():
-    for i in range(4):
-        goto(LAsettings["homepos"])
+    numosc = 3
+    for i in range(numosc):
+        goto(16000)
         goto(LAsettings["downpos"])
-        goto(LAsettings["homepos"])
-        
+        if i == numosc:
+            break
+    
+    
 def oscDry():
     for i in range(1):
         goto(LAsettings["homepos"])
@@ -115,12 +149,8 @@ def gotoTop():
     goto(LAsettings["uppos"])
     
 def calibrate():
-    if manualFlag:
-        calibrateFlag = True
-        LAsettings["currentpos"] = calibratePos
-        ticcmd('--halt-and-set-position', str(calibratePos))
-    else:
-        ticcmd('--current', str(calibrateCurrent))
+    LAsettings["currentpos"] = calibratePos
+    ticcmd('--halt-and-set-position', str(calibratePos))
 
-getPos()
+
 
