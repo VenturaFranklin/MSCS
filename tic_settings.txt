@@ -38,8 +38,8 @@ tx_config: default
 rx_config: default
 rc_config: default
 invert_motor_direction: true
-max_speed: 14500000
-starting_speed: 12000000
+max_speed: 20000000
+starting_speed: 15000000
 max_accel: 40000
 max_decel: 0
 step_mode: 8

@@ -23,6 +23,7 @@ import DispenseReagent
 import WaterPump
 import OpenCloseAir 
 import Camera_Code
+import math
 
 running = True
 
@@ -81,9 +82,9 @@ def stopMrClean(message):
     WaterPump.stopWater()
     OpenCloseAir.close_air()
     OpenCloseAir.turnoffAll_valves()
-    ticControl.goto(ticControl.getPos()) # don't move the linear actuator
+    ticControl.gotoHome() # don't move the linear actuator
     message.set("stopped all processess")
-    running = True
+    
 #     
 # def stopCleanWin():
 #     
@@ -96,20 +97,27 @@ def stopMrClean(message):
 def mrCleanThread(message):
     mainthread = threading.Thread(target = mrClean, args = (message,))
     mainthread.start()
-    errorThread = threading.Thread(target = errorHandler, args = (mainthread,), daemon=True)
+    errorThread = threading.Thread(target = errorHandler, args = (message,), daemon=True)
     errorThread.start()
     
 
 # this function is the thread that watches for linear actuator errors, in case of error,
 # the cleaning process should be stopped
-def errorHandler(thread):
+def errorHandler(message):
+    global running
     print("main error thread started")
     while True:
+        if running == False:
+            return
         if ticControl.hasError():
             print("error detected")
             # houston we have a problem
-            stopMrClean()
+            message.set("Error Detected, Stopping System")
+            stopMrClean(message)
+            
         time.sleep(0.1)
+# def errorMessage();
+#     message.set()
 
 def mrClean(message):
     global pic_num
@@ -140,16 +148,23 @@ def mrClean(message):
         if running:
             message.set("CLEAN OSCILLATE")
             #Linear Actuator oscillates slide up and down between the rollers
-            ticControl.goto(6600)
-            ticControl.goto(16250)
-            ticControl.goto(6600)
-            ticControl.goto(16250)
-            ticControl.goto(6600)
-            ticControl.goto(16250)
-        if running:  
-            message.set("Rinse")
-            WaterPump.startWater() #Dispenses Water
-            ticControl.goto(6600)#goes down
+            numiter = 3
+            toppos = 16250
+            bottom = 5600
+            currpos = toppos
+            dist = math.ceil((toppos - bottom) / numiter)
+            for i in range(numiter):
+                if running:
+                    ticControl.goto(bottom)
+                if running:
+                    if i == numiter - 1:
+                        WaterPump.startWater()
+                        break
+                    ticControl.goto(toppos)
+#                 ticControl.goto(currpos - dist)
+#                 ticControl.goto(currpos - math.ceil(dist / 2))
+#                 currpos = currpos - dist
+
         if running:
             ticControl.gotoHome()#goes to home position above rollers
             WaterPump.stopWater() #stops dispensing water
@@ -182,23 +197,40 @@ def mrClean(message):
     # then after code is run, no matter what, do this. i.e stop all systems
     finally:
         print("finished running ")
-    
+        running = True
+        message.set("Resetting Components")
+        print("Resetting Components")
+        time.sleep(2)
+        message.set("Click Clean to Start")
 
 
 
 def browseFiles():
     filename = filedialog.askopenfilename(initialdir = "/") #opens and displays file explorer
-      
-
-def main_exit_handler():
-    print("exiting")
+    
+def runsoap():
+    for i in range(10):
+        DispenseReagent.startSoap() #Dispenses soap
+        time.sleep(1)
+        DispenseReagent.stopSoap()
+        time.sleep(2) 
+    
+    
+    
+    
+    
+    
+    
+    
+    
 
 class StartPage(tk.Frame):                                 #The Start Page. tk.Frame inherits so we don't have to call.
     def __init__(self, parent, controller):
-        print("registering exit handler")
-        # StartStopRollers.init(False)
-        atexit.register(main_exit_handler)
+        global running
+        
+
         tk.Frame.__init__(self, parent)
+        #tk.Frame.attributes('-fullscreen', True)
         
         label = tk.Label(self, text="MSCS Main Page", font = LARGE_FONT) #class is tk.label() which creates the object = label. 
                                                              #LARGE_FONT defined at the top
@@ -209,17 +241,19 @@ class StartPage(tk.Frame):                                 #The Start Page. tk.F
         mess.grid(row=1, column=500)
                             
     
-        button1 = tk.Button(self, text="CLEAN", width =20, height=10, font=MED_FONT, command = lambda: mrCleanThread(message))
+        button1 = tk.Button(self, text="CLEAN", width =15, height=7, font=MED_FONT, command = lambda: mrCleanThread(message))
         button1.grid(row=1, column=700)
         
-        button3 = tk.Button(self, text="STOP", width =15, height=7, font=MED_FONT, command = stopMrClean(message))
+        button3 = tk.Button(self, text="STOP", width =15, height=5, font=MED_FONT, command = lambda: stopMrClean(message))
         button3.grid(row=2, column=700)
         
-        button5 = tk.Button(self, text="Open Gripper", width=10, height=6, font=MED_FONT, command = OpenCloseAir.open_gripper)
-        button5.grid(row=1, column=800)
+        running = True
+        
+        button5 = tk.Button(self, text="Open\nGripper", width=7, height=5, font=MED_FONT, command = OpenCloseAir.open_gripper)
+        button5.grid(row=1, column=1000)
 
-        button6 = tk.Button(self, text="Close Gripper", width=10, height=6, font=MED_FONT, command = OpenCloseAir.close_gripper)
-        button6.grid(row=2, column=800)
+        button6 = tk.Button(self, text="Close\nGripper", width=7, height=5, font=MED_FONT, command = OpenCloseAir.close_gripper)
+        button6.grid(row=2, column=1000)
 
         button2 = tk.Button(self, text="Components", width =15, height=6, font=MED_FONT,
                             command = lambda: controller.show_frame(ComponentsPage)) 
@@ -230,6 +264,7 @@ class StartPage(tk.Frame):                                 #The Start Page. tk.F
         
         button4 = tk.Button(self, text="Files", width =10, height=3, font=MED_FONT, command = browseFiles) #calls to browse files explorer
         button4.grid(row=2, column=0)
+        
         
         message.set("Click Clean to Start")  
 
@@ -255,7 +290,10 @@ class ComponentsPage(tk.Frame):
         button5 = tk.Button(self, text="Camera", width =15, height=3, font=MED_FONT,
                             command=lambda: controller.show_frame(CameraPage))
         button5.pack()
-
+        
+        buttonUtility = tk.Button(self, text="Run Soap", width =10, height=2, font=MED_FONT, command = runsoap)
+        buttonUtility.pack()
+        
         button1 = tk.Button(self, text="Back to Home", width=10, height=3, font=SMALL_FONT,  #doesn't matter what button variable is called. its unique to class
                             command = lambda: controller.show_frame(StartPage)) 
         button1.pack()
@@ -357,6 +395,8 @@ class SolValPage(tk.Frame):
         button6 = tk.Button(self, text="Close Gripper", width =10, height=2, font=MED_FONT, command = OpenCloseAir.close_gripper)
         button6.pack()
         
+
+        
         button7 = tk.Button(self, text="Turn Off All Valves", width =15, height=2, font=MED_FONT, command = OpenCloseAir.turnoffAll_valves)
         button7.pack()
 
@@ -391,7 +431,8 @@ class CameraPage(tk.Frame):
 
 #where code starts running
 app=MainClass()
-app.geometry("800x800") #width x height of window
+#app.geometry("800x800") #width x height of window
+app.attributes('-fullscreen', True)
 app.mainloop()
 
 #closes air valves after exiting/shutting down main 

@@ -7,11 +7,13 @@ import yaml
 import time
 import atexit
 import threading
+from datetime import timedelta
+from datetime import datetime
 
 manualFlag = False
 
 settingFilePath = "/home/pi/MSCS/" # where the settings are located, this still needs to be checked
-debugFlag = True
+debugFlag = False
 calibratePos = 27000 # temporary calibration position, substitute for a homeing switch
 calibrateFlag = False
 homePos = 23000 # position of slide right above rollers, in front of camera
@@ -19,11 +21,11 @@ upPos = 27000 # top most position of slide
 downPos = 15000 # bottom most position of slide
 calStepSize = 1000 # step size for manual calibration / homing
 calibrateCurrent = 500 # current limit to safely home the LA
-errorFlag = None
+errorFlag = False
 errorMessage = "No Error Currently"
 LAsettings = {
   "currentpos": 27000,
-  "homepos": 19300,
+  "homepos": 20000,
   "uppos": 27000,
   "downpos": 6600,
 } # dictionary for variable storage to file
@@ -56,10 +58,9 @@ def onStop():
     pass
     
 def throwError(message):
-    global errorFlag
     errorMessage = "ERROR: " + message
-    print(errorMessage)
-    errorFlag = True
+    log(errorMessage)
+    super.errorFlag = True
     return
 
 def hasError():
@@ -107,11 +108,16 @@ def goto(pos):
       time.sleep(3)
       ticcmd('--halt-and-set-position', str(pos))
       return
-  
+  t1 = datetime.now()
+  maxtime = 6
   while True: # wait loop to return only when the target position is achieved
+    t2 = datetime.now()
     ticcmd('--reset-command-timeout')
     currentPosition = getPos()
     log("going to " + str(pos) + "currently at " + str(currentPosition))
+    delta = t2 - t1
+    if delta.total_seconds() > maxtime:
+        return
     if abs(currentPosition - pos) < 10:
       return
     time.sleep(0.1)
@@ -121,7 +127,7 @@ def getPos():
       position = LAsettings["currentpos"]
   else:
       log("not manual")
-      print(ticcmd('-s', '--full'))
+      log(ticcmd('-s', '--full'))
       status = yaml.load(ticcmd('-s', '--full'), Loader=yaml.FullLoader)
       position = status['Current position']
   log("getPos " + str(position))
