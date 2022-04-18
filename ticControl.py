@@ -31,17 +31,16 @@ LAsettings = {
 } # dictionary for variable storage to file
 
 def start():
-  errorFlag = False
   atexit.register(exit_handler)
   log("starting linear actuator")
   ticcmd("--energize")
   loadSettings()
   ticcmd("--exit-safe-start")
-  ticcmd('--halt-and-set-position', str(LAsettings["homepos"]))
-  errorThread = threading.Thread(target = errorWatch, args = (), daemon=True)
-  errorThread.start()
+  # ticcmd('--halt-and-set-position', str(LAsettings["homepos"]))
+  
   
 def errorWatch():
+    print("error watch TIC started")
     errors = ["Low VIN"]
     while True:
         status = yaml.load(ticcmd('-s', '--full'), Loader=yaml.FullLoader)
@@ -57,10 +56,17 @@ def errorWatch():
 def onStop():
     pass
     
+def onStart():
+    global errorFlag
+    errorFlag = False
+    errorThread = threading.Thread(target = errorWatch, args = (), daemon=True)
+    errorThread.start()
+    
 def throwError(message):
+    global errorFlag
     errorMessage = "ERROR: " + message
     log(errorMessage)
-    super.errorFlag = True
+    errorFlag = True
     return
 
 def hasError():

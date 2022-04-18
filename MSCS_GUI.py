@@ -123,6 +123,8 @@ def mrClean(message):
     global pic_num
     global running
 
+    running = True
+
     if not running:
         return
 
@@ -133,6 +135,7 @@ def mrClean(message):
 #             message.set("take 'before' picture")
 #             pic_num += 1 #Increases the count number for next image 
 #             Camera_Code.Take_Pic(pic_num, False) #Camera Takes picture and sends as False to name as "before"
+        ticControl.onStart()
         if running:
             message.set("Start Rollers")
             StartStopRollers.startRollers() #Starts Rollers
@@ -208,12 +211,13 @@ def mrClean(message):
 def browseFiles():
     filename = filedialog.askopenfilename(initialdir = "/") #opens and displays file explorer
     
-def runsoap():
-    for i in range(10):
-        DispenseReagent.startSoap() #Dispenses soap
-        time.sleep(1)
-        DispenseReagent.stopSoap()
-        time.sleep(2) 
+def utilbutton():
+    ticControl.gotoHome()
+#     for i in range(10):
+#         DispenseReagent.startSoap() #Dispenses soap
+#         time.sleep(1)
+#         DispenseReagent.stopSoap()
+#         time.sleep(2) 
     
     
     
@@ -291,7 +295,7 @@ class ComponentsPage(tk.Frame):
                             command=lambda: controller.show_frame(CameraPage))
         button5.pack()
         
-        buttonUtility = tk.Button(self, text="Run Soap", width =10, height=2, font=MED_FONT, command = runsoap)
+        buttonUtility = tk.Button(self, text="goto home", width =10, height=2, font=MED_FONT, command = utilbutton)
         buttonUtility.pack()
         
         button1 = tk.Button(self, text="Back to Home", width=10, height=3, font=SMALL_FONT,  #doesn't matter what button variable is called. its unique to class
