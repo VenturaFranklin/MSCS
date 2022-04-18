@@ -54,11 +54,23 @@ This folder contains all files of code needed to run the GUI and control all the
  - Contains the functions used to take a picture during the cleaning process and the code to control it using the camera component page of the GUI.
  
 # Setup Raspberry Pi
+Raspberry Pi OS Version:
+1. Go to (https://downloads.raspberrypi.org/raspios_full_armhf/images/raspios_full_armhf-2021-03-25/) to get '2021-03-04-raspios-buster-armhf-full.zip'
+
 (Steps 1-4) Standard updates: 
-1. `sudo apt-get update`
-2. `sudo apt-get upgrade` 
-3. `sudo apt-get install python3-pip`
-4. `sudo pip3 install --upgrade setuptools`
+2. `sudo apt-get update`
+3. `sudo apt-get upgrade` 
+4. `sudo apt-get install python3-pip`
+5. `sudo pip3 install --upgrade setuptools`
+
+(Steps 6-#) For Camera Kernel (https://www.arducam.com/docs/cameras-for-raspberry-pi/pivariety/how-to-install-kernel-driver-for-pivariety-camera/#21-the-first-way-build-from-the-kernel-source):
+
+6. 'wget -O install_pivariety_pkgs.sh https://github.com/ArduCAM/Arducam-Pivariety-V4L2-Driver/releases/download/install_script/install_pivariety_pkgs.sh'
+7. 'chmod +x install_pivariety_pkgs.sh'
+8. './install_pivariety_pkgs.sh -p kernel_driver''
+   8a. To check if the camera is detected, enter: 'dmesg | grep arducam'
+       You should see:
+       
 
 (Steps 5-8) For installing board (https://learn.adafruit.com/circuitpython-on-raspberrypi-linux/installing-circuitpython-on-raspberry-pi):
 
