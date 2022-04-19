@@ -50,7 +50,7 @@ def errorWatch():
                 # houston we have a problem
                 throwError(issue)
                 return
-        time.sleep(0.1)
+        time.sleep(2)
 
 
 def onStop():

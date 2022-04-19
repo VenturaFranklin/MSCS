@@ -202,6 +202,7 @@ def mrClean(message):
         print("finished running ")
         running = True
         message.set("Resetting Components")
+        stopMrClean(message)
         print("Resetting Components")
         time.sleep(2)
         message.set("Click Clean to Start")
@@ -213,7 +214,7 @@ def browseFiles():
     
 def utilbutton():
     ticControl.gotoHome()
-#     for i in range(10):
+#     for i in range(100):
 #         DispenseReagent.startSoap() #Dispenses soap
 #         time.sleep(1)
 #         DispenseReagent.stopSoap()
