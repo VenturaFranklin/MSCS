@@ -24,13 +24,14 @@ import OpenCloseAir
 import Camera_Code
 import math
 
-running = True
+
 
 #Variables
 LARGE_FONT = ("Verdana", 40)
 MED_FONT = ("Calibri", 30)
 SMALL_FONT= ("Calibri", 20)
 pic_num = 0
+running = True
 mainthread = None
 
 class MainClass(tk.Tk):                                      #BASELINE of code for creating and opening a page and moving from page to page
@@ -50,9 +51,7 @@ class MainClass(tk.Tk):                                      #BASELINE of code f
 
         self.frames = {}                    #dictionary for all the frames
 
-
-        #####**********             When adding a new page just add it to this for loop list                    *******####
-
+        #####**********         When adding a new page just add it to this for loop list              *******####
         for F in (StartPage, ComponentsPage, RollersPage, LinActPage, PumpsPage, SolValPage, CameraPage, ExitPage):      
         #for Frame in startpage and page one, saves frame to self.frames{} dictionary. 
                                                     #So when def show_frame it shows current frame.      
@@ -72,7 +71,11 @@ class MainClass(tk.Tk):                                      #BASELINE of code f
         frame.tkraise()             #raises window to front. When key is found it brings to front.
 
 
-#functions for stuff
+
+
+
+                                            #####****FUNCTIONS FOR STUFF****#####
+
 def stopMrClean(message):
     global running
     running = False
@@ -84,16 +87,8 @@ def stopMrClean(message):
     ticControl.gotoHome() # don't move the linear actuator
     message.set("stopped all processess")
     
-#     
-# def stopCleanWin():
-#     
-#     stopPopup = tk.Tk()
-#     stopPopup.title("Cleaning Initiated")
-#     button = tk.Button(stopPopup, text = "Stop Cleaning", width=10, height=10, command = stopMrClean)
-#     button.pack()
-#     stopPopup.mainloop()
 
-def mrCleanThread(message):
+def mrCleanThread(message): #Threading for to stop mrClean in the middle of running, either by error or manual stopping button
     mainthread = threading.Thread(target = mrClean, args = (message,))
     mainthread.start()
     errorThread = threading.Thread(target = errorHandler, args = (message,), daemon=True)
@@ -113,22 +108,16 @@ def errorHandler(message):
             # houston we have a problem
             message.set("Error Detected, Stopping System")
             stopMrClean(message)
-            
+
         time.sleep(0.1)
-# def errorMessage();
-#     message.set()
 
 def mrClean(message):
     global pic_num
     global running
-
     running = True
 
     if not running:
         return
-
-    #stopCleanWin() #popup window for stop button
-
     try:
 #         if running:
 #             message.set("take 'before' picture")
@@ -146,7 +135,6 @@ def mrClean(message):
         if running:
             message.set("Go to Home")
             ticControl.gotoHome() #Linear Actuator moves slide to home position or cleaning position
-
         if running:
             message.set("CLEAN OSCILLATE")
             #Linear Actuator oscillates slide up and down between the rollers
@@ -166,7 +154,6 @@ def mrClean(message):
 #                 ticControl.goto(currpos - dist)
 #                 ticControl.goto(currpos - math.ceil(dist / 2))
 #                 currpos = currpos - dist
-
         if running:
             ticControl.gotoHome()#goes to home position above rollers
             WaterPump.stopWater() #stops dispensing water
@@ -182,16 +169,13 @@ def mrClean(message):
         if running:    
             message.set("close air")
             OpenCloseAir.close_air() #Closes drying air valve
-            
             message.set("Go to Home")
             ticControl.gotoHome() #Linear Actuator moves slide up to top
             message.set("Done Cleaning")
-
-#         print("take 'after' picture")
-#         Camera_Code.Take_Pic(pic_num, True) #Camera Takes picture and sends as True to name as "after"
-        
-        
-    
+        # if running:
+        #     print("take 'after' picture")
+        #     Camera_Code.Take_Pic(pic_num, True) #Camera Takes picture and sends as True to name as "after"
+         
     # in case an error is thrown, do this
     except:
         print("error thrown")
@@ -204,7 +188,6 @@ def mrClean(message):
         print("Resetting Components")
         time.sleep(2)
         message.set("Click Clean to Start")
-
 
 
 def browseFiles():
@@ -225,21 +208,17 @@ def Prime(message):
     
     
     
-    
-    
+                                            ##### ***** GUI PAGES ***** #####
     
 
 class StartPage(tk.Frame):                                 #The Start Page. tk.Frame inherits so we don't have to call.
     def __init__(self, parent, controller):
         global running
-
         tk.Frame.__init__(self, parent)
-
 
         label = tk.Label(self, text="MSCS Main Page", font = LARGE_FONT) #class is tk.label() which creates the object = label. 
                                                              #LARGE_FONT defined at the top
         label.grid(row=0, column=2) 
-
 
         message = tk.StringVar()   
         mess = tk.Label(self, textvariable=message, font = MED_FONT) 
@@ -307,10 +286,9 @@ class ComponentsPage(tk.Frame):
                             command=lambda: controller.show_frame(CameraPage))
         button5.pack()
         
-        button1 = tk.Button(self, text="Back to Home", width=15, height=2, font=SMALL_FONT,  #doesn't matter what button variable is called. its unique to class
+        button1 = tk.Button(self, text="Back to Home", width=15, height=2, font=SMALL_FONT, 
                             command = lambda: controller.show_frame(StartPage)) 
         button1.pack()
-
 
 class RollersPage(tk.Frame):
     def __init__(self, parent, controller):
