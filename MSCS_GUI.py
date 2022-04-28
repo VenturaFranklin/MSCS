@@ -1,5 +1,4 @@
 #Created by Elijah Keeswood on 03/08/2022
-#Copyright @ 2022 Elijah Keeswood. All rights reserved.
 #Senior Design Team: 22010
 #MSCS GUI
 
@@ -54,7 +53,7 @@ class MainClass(tk.Tk):                                      #BASELINE of code f
 
         #####**********             When adding a new page just add it to this for loop list                    *******####
 
-        for F in (StartPage, ComponentsPage, RollersPage, LinActPage, PumpsPage, SolValPage, CameraPage):      
+        for F in (StartPage, ComponentsPage, RollersPage, LinActPage, PumpsPage, SolValPage, CameraPage, ExitPage):      
         #for Frame in startpage and page one, saves frame to self.frames{} dictionary. 
                                                     #So when def show_frame it shows current frame.      
             frame = F(container, self)  #pass through container and self
@@ -211,13 +210,15 @@ def mrClean(message):
 def browseFiles():
     filename = filedialog.askopenfilename(initialdir = "/") #opens and displays file explorer
     
-def utilbutton():
-    ticControl.gotoHome()
-#     for i in range(10):
-#         DispenseReagent.startSoap() #Dispenses soap
-#         time.sleep(1)
-#         DispenseReagent.stopSoap()
-#         time.sleep(2) 
+def Prime(message):
+    message.set("Priming")
+    DispenseReagent.startSoap()
+    WaterPump.startWater()
+    time.sleep(3)
+    DispenseReagent.stopSoap()
+    WaterPump.stopWater()
+    message.set("Done Priming")
+    message.set("Click Clean to Start")
     
     
     
@@ -231,45 +232,52 @@ def utilbutton():
 class StartPage(tk.Frame):                                 #The Start Page. tk.Frame inherits so we don't have to call.
     def __init__(self, parent, controller):
         global running
-        
 
         tk.Frame.__init__(self, parent)
-        #tk.Frame.attributes('-fullscreen', True)
-        
+
+
         label = tk.Label(self, text="MSCS Main Page", font = LARGE_FONT) #class is tk.label() which creates the object = label. 
                                                              #LARGE_FONT defined at the top
-        label.grid(row=0, column=500, pady=10, padx=10) #pad puts padding on it. looks nice.
+        label.grid(row=0, column=2) 
+
 
         message = tk.StringVar()   
         mess = tk.Label(self, textvariable=message, font = MED_FONT) 
-        mess.grid(row=1, column=500)
+        mess.grid(row=1, column=2)
                             
     
-        button1 = tk.Button(self, text="CLEAN", width =15, height=7, font=MED_FONT, command = lambda: mrCleanThread(message))
-        button1.grid(row=1, column=700)
+        button1 = tk.Button(self, text="CLEAN", width =15, height=5, font=LARGE_FONT, command = lambda: mrCleanThread(message))
+        button1.grid(row=3, column=2, padx=50)
         
         button3 = tk.Button(self, text="STOP", width =15, height=5, font=MED_FONT, command = lambda: stopMrClean(message))
-        button3.grid(row=2, column=700)
+        button3.grid(row=4, column=2)
         
-        running = True
+        running = True #Reads through buttons on start up it. This makes it so does not stay running=False from stopMrClean
         
-        button5 = tk.Button(self, text="Open\nGripper", width=7, height=5, font=MED_FONT, command = OpenCloseAir.open_gripper)
-        button5.grid(row=1, column=1000)
 
-        button6 = tk.Button(self, text="Close\nGripper", width=7, height=5, font=MED_FONT, command = OpenCloseAir.close_gripper)
-        button6.grid(row=2, column=1000)
+        button5 = tk.Button(self, text="Open\nGripper", width=10, height=5, font=MED_FONT, command = OpenCloseAir.open_gripper)
+        button5.grid(row=3, column=4, padx=10, pady=50)
 
-        button2 = tk.Button(self, text="Components", width =15, height=6, font=MED_FONT,
+        button6 = tk.Button(self, text="Close\nGripper", width=10, height=5, font=MED_FONT, command = OpenCloseAir.close_gripper)
+        button6.grid(row=4, column=4)
+
+
+        button2 = tk.Button(self, text="Components", width=15, height=6, font=MED_FONT,
                             command = lambda: controller.show_frame(ComponentsPage)) 
                                      #lambda creates a quick throwaway fxn. Only here when we call it.
                                      #can also pass variables through; command = lambda: fxn("sus")
                                                                    #ComponentsPage is a class                        
-        button2.grid(row=1, column=0)
+        button2.grid(row=3, column=1, padx=50, sticky='s')
         
         button4 = tk.Button(self, text="Files", width =10, height=3, font=MED_FONT, command = browseFiles) #calls to browse files explorer
-        button4.grid(row=2, column=0)
+        button4.grid(row=4, column=1)
+
+        button7 = tk.Button(self, text="Exit", width =7, height=1, font=MED_FONT, command = lambda: controller.show_frame(ExitPage)) #Exits the MSCS GUI window
+        button7.grid(row=1, column=5, sticky='ne')        
         
-        
+        button7 = tk.Button(self, text="Prime", width =10, height=3, font=MED_FONT, command = Prime(message)) #Exits the MSCS GUI window
+        button7.grid(row=3, column=5, padx=20, sticky='s')  
+
         message.set("Click Clean to Start")  
 
 
@@ -279,26 +287,27 @@ class ComponentsPage(tk.Frame):
         label = tk.Label(self, text = "Components", font = LARGE_FONT)
         label.pack(pady=10, padx=10)
 
-        button2 = tk.Button(self, text="Rollers", width =15, height=3,font=MED_FONT,
+        button2 = tk.Button(self, text="Rollers", width =15, height=2,font=MED_FONT,
                             command=lambda: controller.show_frame(RollersPage))
         button2.pack()
 
-        button3= tk.Button(self, text="Linear Actuator",width =15, height=3, font=MED_FONT,
+        button3= tk.Button(self, text="Linear Actuator",width =15, height=2, font=MED_FONT,
                             command=lambda: controller.show_frame(LinActPage))
         button3.pack()
 
-        button4 = tk.Button(self, text="Pumps", width =15, height=3, font=MED_FONT,
+        button6 = tk.Button(self, text="Solenoid Valves",width=15, height=2, font=MED_FONT,                       
+                            command = lambda: controller.show_frame(SolValPage))
+        button6.pack()
+
+        button4 = tk.Button(self, text="Pumps", width =15, height=2, font=MED_FONT,
                             command=lambda: controller.show_frame(PumpsPage))
         button4.pack()
 
-        button5 = tk.Button(self, text="Camera", width =15, height=3, font=MED_FONT,
+        button5 = tk.Button(self, text="Camera", width =15, height=2, font=MED_FONT,
                             command=lambda: controller.show_frame(CameraPage))
         button5.pack()
         
-        buttonUtility = tk.Button(self, text="goto home", width =10, height=2, font=MED_FONT, command = utilbutton)
-        buttonUtility.pack()
-        
-        button1 = tk.Button(self, text="Back to Home", width=10, height=3, font=SMALL_FONT,  #doesn't matter what button variable is called. its unique to class
+        button1 = tk.Button(self, text="Back to Home", width=15, height=2, font=SMALL_FONT,  #doesn't matter what button variable is called. its unique to class
                             command = lambda: controller.show_frame(StartPage)) 
         button1.pack()
 
@@ -316,11 +325,11 @@ class RollersPage(tk.Frame):
         button4 = tk.Button(self, text="Stop", width =20, height=5, font=MED_FONT, command = StartStopRollers.stopRollers)
         button4.pack()
 
-        button2 = tk.Button(self, text="Components",  width=10, height=3, font=SMALL_FONT,                     
+        button2 = tk.Button(self, text="Components",  width=20, height=3, font=SMALL_FONT,                     
                             command = lambda: controller.show_frame(ComponentsPage))
         button2.pack()
 
-        button1 = tk.Button(self, text="Back to Home", width=10, height=3, font=SMALL_FONT,                        
+        button1 = tk.Button(self, text="Back to Home", width=15, height=3, font=SMALL_FONT,                        
                             command = lambda: controller.show_frame(StartPage))
         button1.pack()
 
@@ -330,23 +339,23 @@ class LinActPage(tk.Frame):
         label = tk.Label(self, text = "Linear Actuator", font = LARGE_FONT)
         label.pack(pady=10, padx=10)
 
-        button3 = tk.Button(self, text="Calibrate", width =20, height=5, command = ticControl.calibrate)
+        button3 = tk.Button(self, text="Calibrate", width =20, height=2, font=MED_FONT, command = ticControl.calibrate)
         button3.pack()
         #start
-        button4 = tk.Button(self, text="Start", width =20, height=5, command = ticControl.start)
+        button4 = tk.Button(self, text="Start", width =20, height=2, font=MED_FONT, command = ticControl.start)
         button4.pack()
         #up
-        button5 = tk.Button(self, text="Up", width =20, height=5, command = ticControl.up)
+        button5 = tk.Button(self, text="Up", width =20, height=2, font=MED_FONT, command = ticControl.up)
         button5.pack()
         #down
-        button6 = tk.Button(self, text="Down", width =20, height=5, command = ticControl.down)
+        button6 = tk.Button(self, text="Down", width =20, height=2, font=MED_FONT, command = ticControl.down)
         button6.pack()
 
-        button2 = tk.Button(self, text="Back to Components", width=10, height=3, font=SMALL_FONT,                       
+        button2 = tk.Button(self, text="Back to Components", width=20, height=2, font=SMALL_FONT,                       
                             command = lambda: controller.show_frame(ComponentsPage))
         button2.pack()
 
-        button1 = tk.Button(self, text="Back to Home", width=10, height=3, font=SMALL_FONT,         
+        button1 = tk.Button(self, text="Back to Home", width=15, height=2, font=SMALL_FONT,         
                             command = lambda: controller.show_frame(StartPage))
         button1.pack()
 
@@ -355,28 +364,24 @@ class PumpsPage(tk.Frame):
         tk.Frame.__init__(self, parent)
         label = tk.Label(self, text = "Pumps", font = LARGE_FONT)
         label.pack(pady=10, padx=10)
-
-        button3 = tk.Button(self, text="Solenoid Valves",width=10, height=2, font=MED_FONT,                       
-                            command = lambda: controller.show_frame(SolValPage))
-        button3.pack()
         
-        button4 = tk.Button(self, text="Start Soap", width =10, height=2, font=MED_FONT, command = DispenseReagent.startSoap)
+        button4 = tk.Button(self, text="Start Soap", width =20, height=2, font=MED_FONT, command = DispenseReagent.startSoap)
         button4.pack()
         
-        button5 = tk.Button(self, text="Stop Soap", width =10, height=2, font=MED_FONT, command = DispenseReagent.stopSoap)
+        button5 = tk.Button(self, text="Stop Soap", width =20, height=2, font=MED_FONT, command = DispenseReagent.stopSoap)
         button5.pack()
 
-        button6 = tk.Button(self, text="Start Water", width =10, height=2, font=MED_FONT, command = WaterPump.startWater)
+        button6 = tk.Button(self, text="Start Water", width =20, height=2, font=MED_FONT, command = WaterPump.startWater)
         button6.pack()
         
-        button6 = tk.Button(self, text="Stop Water", width =10, height=2, font=MED_FONT, command = WaterPump.stopWater)
+        button6 = tk.Button(self, text="Stop Water", width =20, height=2, font=MED_FONT, command = WaterPump.stopWater)
         button6.pack()
 
-        button2 = tk.Button(self, text="Back to Components", width=10, height=2, font=SMALL_FONT,                        
+        button2 = tk.Button(self, text="Back to Components", width=20, height=2, font=SMALL_FONT,                        
                             command = lambda: controller.show_frame(ComponentsPage))
         button2.pack()
 
-        button1 = tk.Button(self, text="Back to Home", width=10, height=2, font=SMALL_FONT,                       
+        button1 = tk.Button(self, text="Back to Home", width=15, height=2, font=SMALL_FONT,                       
                             command = lambda: controller.show_frame(StartPage))
         button1.pack()
 
@@ -385,32 +390,32 @@ class SolValPage(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         label = tk.Label(self, text = "Solenoid Valves", font = LARGE_FONT)
-        label.pack(pady=10, padx=10)
+        label.grid(row=0, column=2, pady=10, padx=10)
+        label = tk.Label(self, text = "\t      ", font = MED_FONT)
+        label.grid(column=0)
 
-        button3 = tk.Button(self, text="Open Air", width =10, height=2, font=MED_FONT, command = OpenCloseAir.open_air)
-        button3.pack()
+        button3 = tk.Button(self, text="Open Air", width =15, height=2, font=MED_FONT, command = OpenCloseAir.open_air)
+        button3.grid(row=1, column=1, sticky='e')
         
-        button4 = tk.Button(self, text="Close Air", width =10, height=2, font=MED_FONT, command = OpenCloseAir.close_air)
-        button4.pack()
+        button4 = tk.Button(self, text="Close Air", width =15, height=2, font=MED_FONT, command = OpenCloseAir.close_air)
+        button4.grid(row=2, column=1, sticky='e')
         
-        button5 = tk.Button(self, text="Open Gripper", width =10, height=2, font=MED_FONT, command = OpenCloseAir.open_gripper)
-        button5.pack()
+        button5 = tk.Button(self, text="Open Gripper", width =15, height=2, font=MED_FONT, command = OpenCloseAir.open_gripper)
+        button5.grid(row=1, column=3, sticky='w')
 
-        button6 = tk.Button(self, text="Close Gripper", width =10, height=2, font=MED_FONT, command = OpenCloseAir.close_gripper)
-        button6.pack()
+        button6 = tk.Button(self, text="Close Gripper", width =15, height=2, font=MED_FONT, command = OpenCloseAir.close_gripper)
+        button6.grid(row=2, column=3, sticky='w')
         
+        button7 = tk.Button(self, text="Turn Off All Valves", width =18, height=2, font=MED_FONT, command = OpenCloseAir.turnoffAll_valves)
+        button7.grid(row=3, column=2, sticky='n')
 
-        
-        button7 = tk.Button(self, text="Turn Off All Valves", width =15, height=2, font=MED_FONT, command = OpenCloseAir.turnoffAll_valves)
-        button7.pack()
+        button2 = tk.Button(self, text="Back to Components", width=20, height=2, font=SMALL_FONT,                         
+                            command = lambda: controller.show_frame(ComponentsPage))
+        button2.grid(row=4, column=2)
 
-        button2 = tk.Button(self, text="Back to Pumps", width=10, height=2, font=SMALL_FONT,                         
-                            command = lambda: controller.show_frame(PumpsPage))
-        button2.pack()
-
-        button1 = tk.Button(self, text="Back to Home",  width=10, height=2, font=SMALL_FONT,                       
+        button1 = tk.Button(self, text="Back to Home",  width=15, height=2, font=SMALL_FONT,                       
                             command = lambda: controller.show_frame(StartPage))
-        button1.pack()
+        button1.grid(row=5, column=2)
 
 class CameraPage(tk.Frame):
     def __init__(self, parent, controller):
@@ -421,17 +426,26 @@ class CameraPage(tk.Frame):
         button3 = tk.Button(self, text="Take Picture", width =20, height=5, font=MED_FONT, command = Camera_Code.Take_Test_Pic) #Takes test image labelled as test
         button3.pack()
 
-        button4 = tk.Button(self, text="Files", width =20, height=5, font=MED_FONT, command = browseFiles)
+        button4 = tk.Button(self, text="Files", width =20, height=3, font=MED_FONT, command = browseFiles)
         button4.pack()
 
-        button2 = tk.Button(self, text="Back to Components", width=10, height=3, font=SMALL_FONT,                        
+        button2 = tk.Button(self, text="Back to Components", width=20, height=3, font=SMALL_FONT,                        
                             command = lambda: controller.show_frame(ComponentsPage))
         button2.pack()
 
-        button1 = tk.Button(self, text="Back to Home", width=10, height=3, font=SMALL_FONT,                        
+        button1 = tk.Button(self, text="Back to Home", width=15, height=3, font=SMALL_FONT,                        
                             command = lambda: controller.show_frame(StartPage))
         button1.pack()
         
+class ExitPage(tk.Frame):
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self, parent)
+        label = tk.Label(self, text = "EXIT\nAre you sure?", font = LARGE_FONT)
+        label.pack(pady=10, padx=10)      
+        button4 = tk.Button(self, text="Yes", width =15, height=3, font=MED_FONT, command = controller.destroy)
+        button4.pack(pady=10)
+        button4 = tk.Button(self, text="No", width =15, height=3, font=MED_FONT, command = lambda: controller.show_frame(StartPage))
+        button4.pack(pady=10)  
 
 #where code starts running
 app=MainClass()
@@ -442,6 +456,3 @@ app.mainloop()
 #closes air valves after exiting/shutting down main 
 print("Turning off All valves")
 OpenCloseAir.turnoffAll_valves()
-
-
-
