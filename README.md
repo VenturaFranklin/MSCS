@@ -69,8 +69,12 @@ Raspberry Pi OS Version:
 7. 'chmod +x install_pivariety_pkgs.sh'
 8. './install_pivariety_pkgs.sh -p kernel_driver''
    8a. To check if the camera is detected, enter: 'dmesg | grep arducam'
-       You should see:
-       
+   8b. To check if the video nodes are normal, enter: 'ls /dev/video* -l'
+   8c. To view the device node information: enter: 'v4l2-ctl --list-formats-ext'
+
+(Steps 9-#) For Camera Access and to Program (https://www.arducam.com/docs/cameras-for-raspberry-pi/pivariety/how-to-access-and-program-the-pivariety-camera-using-command-line-python-opencv-and-gstreamer/):
+
+9. 
 
 (Steps 5-8) For installing board (https://learn.adafruit.com/circuitpython-on-raspberrypi-linux/installing-circuitpython-on-raspberry-pi):
 
