@@ -57,8 +57,7 @@ This folder contains all files of code needed to run the GUI and control all the
  
 # Setup Raspberry Pi
 Raspberry Pi OS Version:
-1. Go to (https://downloads.raspberrypi.org/raspios_full_armhf/images/raspios_full_armhf-2021-03-25/) to get '2021-03-04-raspios-buster-armhf-full.zip' 
-   
+1. Go to (https://downloads.raspberrypi.org/raspios_full_armhf/images/raspios_full_armhf-2021-03-25/) to get `2021-03-04-raspios-buster-armhf-full.zip` 
    1a. Unzip this file and then install the OS on the Raspberry Pi SD card using something like the Raspberry Pi Imager (https://www.raspberrypi.com/software/)
 
 (Steps 2-5) Standard updates: 
@@ -68,26 +67,26 @@ Raspberry Pi OS Version:
 5. `sudo pip3 install --upgrade setuptools`
 
 (Step 6) Update Linux Kernel to be Compatible with Camera:
-6. 'sudo rpi-update b4145cfaa838049fcc1174d1311a98a854703c29'
+6. `sudo rpi-update b4145cfaa838049fcc1174d1311a98a854703c29`
 
 (Steps 7-9) For Camera Kernel (https://www.arducam.com/docs/cameras-for-raspberry-pi/pivariety/how-to-install-kernel-driver-for-pivariety-camera/#21-the-first-way-build-from-the-kernel-source):
 
-7. 'wget -O install_pivariety_pkgs.sh https://github.com/ArduCAM/Arducam-Pivariety-V4L2-Driver/releases/download/install_script/install_pivariety_pkgs.sh'
-8. 'chmod +x install_pivariety_pkgs.sh'
-9. './install_pivariety_pkgs.sh -p kernel_driver''
-   9a. To check if the camera is detected, enter: 'dmesg | grep arducam'
-   9b. To check if the video nodes are normal, enter: 'ls /dev/video* -l'
-   9c. To view the device node information: enter: 'v4l2-ctl --list-formats-ext'
+7. `wget -O install_pivariety_pkgs.sh https://github.com/ArduCAM/Arducam-Pivariety-V4L2-Driver/releases/download/install_script/install_pivariety_pkgs.sh`
+8. `chmod +x install_pivariety_pkgs.sh`
+9. `./install_pivariety_pkgs.sh -p kernel_driver`
+   9a. To check if the camera is detected, enter: `dmesg | grep arducam`
+   9b. To check if the video nodes are normal, enter: `ls /dev/video* -l`
+   9c. To view the device node information: enter: `v4l2-ctl --list-formats-ext`
 
 (Steps 10-14) For Camera Access and to Program (https://www.arducam.com/docs/cameras-for-raspberry-pi/pivariety/how-to-access-and-program-the-pivariety-camera-using-command-line-python-opencv-and-gstreamer/):
 
-10. 'wget -O install_pivariety_pkgs.sh https://github.com/ArduCAM/Arducam-Pivariety-V4L2-Driver/releases/download/install_script/install_pivariety_pkgs.sh'
-11. 'chmod +x install_pivariety_pkgs.sh'
-12. './install_pivariety_pkgs.sh -p libcamera_dev'
-13. './install_pivariety_pkgs.sh -p libcamera_apps'
-14. Check if the camera is working properly by taking a picture: 'libcamera-still -t 5000 -o test.jpg'
-   14a. For Raspberry Pi 3 devices: Make sure that 'dtoverlay=vc4-fkms-v3d' is in the '[all]' section of '/boot/config.txt'
-   14b. Also for Raspberry Pi 3 devices: Add 'cma=400M' to the end of '/boot/cmdline.txt'
+10. `wget -O install_pivariety_pkgs.sh https://github.com/ArduCAM/Arducam-Pivariety-V4L2-Driver/releases/download/install_script/install_pivariety_pkgs.sh`
+11. `chmod +x install_pivariety_pkgs.sh`
+12. `./install_pivariety_pkgs.sh -p libcamera_dev`
+13. `./install_pivariety_pkgs.sh -p libcamera_apps`
+14. Check if the camera is working properly by taking a picture: `libcamera-still -t 5000 -o test.jpg`
+   14a. For Raspberry Pi 3 devices: Make sure that `dtoverlay=vc4-fkms-v3d` is in the `[all]` section of `/boot/config.txt`
+   14b. Also for Raspberry Pi 3 devices: Add `cma=400M` to the end of `/boot/cmdline.txt`
 
 (Steps 15-18) For installing board (https://learn.adafruit.com/circuitpython-on-raspberrypi-linux/installing-circuitpython-on-raspberry-pi):
 
