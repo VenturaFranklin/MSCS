@@ -58,6 +58,7 @@ This folder contains all files of code needed to run the GUI and control all the
 # Setup Raspberry Pi
 Raspberry Pi OS Version:
 1. Go to (https://downloads.raspberrypi.org/raspios_full_armhf/images/raspios_full_armhf-2021-03-25/) to get '2021-03-04-raspios-buster-armhf-full.zip' 
+   
    1a. Unzip this file and then install the OS on the Raspberry Pi SD card using something like the Raspberry Pi Imager (https://www.raspberrypi.com/software/)
 
 (Steps 2-5) Standard updates: 
