@@ -42,9 +42,10 @@ This folder contains all files of code needed to run the GUI and control all the
  - Relay one is for opening and closing drying valve. Relays two and three are for the valves that open and close the gripper. 
  - Functions are called to automatically in the cleaning cycle and manually in the Solenoid Valves page.
  
-
+ 
 ## pin assignments
  - Variable assignments for Raspberry Pi pin numbers
+ 
  
 ## Camera
  ### Camera_Terminal_Test_Code.py
@@ -53,44 +54,55 @@ This folder contains all files of code needed to run the GUI and control all the
  ### Camera_Code.py
  - Contains the functions used to take a picture during the cleaning process and the code to control it using the camera component page of the GUI.
  
+ 
 # Setup Raspberry Pi
 Raspberry Pi OS Version:
 1. Go to (https://downloads.raspberrypi.org/raspios_full_armhf/images/raspios_full_armhf-2021-03-25/) to get '2021-03-04-raspios-buster-armhf-full.zip'
+   1a. Unzip this file and then install the OS on the Raspberry Pi SD card using something like the Raspberry Pi Imager (https://www.raspberrypi.com/software/)
 
-(Steps 1-4) Standard updates: 
+(Steps 2-5) Standard updates: 
 2. `sudo apt-get update`
 3. `sudo apt-get upgrade` 
 4. `sudo apt-get install python3-pip`
 5. `sudo pip3 install --upgrade setuptools`
 
-(Steps 6-#) For Camera Kernel (https://www.arducam.com/docs/cameras-for-raspberry-pi/pivariety/how-to-install-kernel-driver-for-pivariety-camera/#21-the-first-way-build-from-the-kernel-source):
+(Step 6) Update Linux Kernel to be Compatible with Camera:
+6. 'sudo rpi-update b4145cfaa838049fcc1174d1311a98a854703c29'
 
-6. 'wget -O install_pivariety_pkgs.sh https://github.com/ArduCAM/Arducam-Pivariety-V4L2-Driver/releases/download/install_script/install_pivariety_pkgs.sh'
-7. 'chmod +x install_pivariety_pkgs.sh'
-8. './install_pivariety_pkgs.sh -p kernel_driver''
-   8a. To check if the camera is detected, enter: 'dmesg | grep arducam'
-   8b. To check if the video nodes are normal, enter: 'ls /dev/video* -l'
-   8c. To view the device node information: enter: 'v4l2-ctl --list-formats-ext'
+(Steps 7-9) For Camera Kernel (https://www.arducam.com/docs/cameras-for-raspberry-pi/pivariety/how-to-install-kernel-driver-for-pivariety-camera/#21-the-first-way-build-from-the-kernel-source):
 
-(Steps 9-#) For Camera Access and to Program (https://www.arducam.com/docs/cameras-for-raspberry-pi/pivariety/how-to-access-and-program-the-pivariety-camera-using-command-line-python-opencv-and-gstreamer/):
+7. 'wget -O install_pivariety_pkgs.sh https://github.com/ArduCAM/Arducam-Pivariety-V4L2-Driver/releases/download/install_script/install_pivariety_pkgs.sh'
+8. 'chmod +x install_pivariety_pkgs.sh'
+9. './install_pivariety_pkgs.sh -p kernel_driver''
+   9a. To check if the camera is detected, enter: 'dmesg | grep arducam'
+   9b. To check if the video nodes are normal, enter: 'ls /dev/video* -l'
+   9c. To view the device node information: enter: 'v4l2-ctl --list-formats-ext'
 
-9. 
+(Steps 10-14) For Camera Access and to Program (https://www.arducam.com/docs/cameras-for-raspberry-pi/pivariety/how-to-access-and-program-the-pivariety-camera-using-command-line-python-opencv-and-gstreamer/):
 
-(Steps 5-8) For installing board (https://learn.adafruit.com/circuitpython-on-raspberrypi-linux/installing-circuitpython-on-raspberry-pi):
+10. 'wget -O install_pivariety_pkgs.sh https://github.com/ArduCAM/Arducam-Pivariety-V4L2-Driver/releases/download/install_script/install_pivariety_pkgs.sh'
+11. 'chmod +x install_pivariety_pkgs.sh'
+12. './install_pivariety_pkgs.sh -p libcamera_dev'
+13. './install_pivariety_pkgs.sh -p libcamera_apps'
+14. Check if the camera is working properly by taking a picture: 'libcamera-still -t 5000 -o test.jpg'
+   14a. For Raspberry Pi 3 devices: Make sure that 'dtoverlay=vc4-fkms-v3d' is in the '[all]' section of '/boot/config.txt'
+   14b. Also for Raspberry Pi 3 devices: Add 'cma=400M' to the end of '/boot/cmdline.txt'
 
-5. `cd ~`
-6. `sudo pip3 install --upgrade adafruit-python-shell`
-7. `wget https://raw.githubusercontent.com/adafruit/Raspberry-Pi-Installer-Scripts/master/raspi-blinka.py`
-8. `sudo python3 raspi-blinka.py`
+(Steps 15-18) For installing board (https://learn.adafruit.com/circuitpython-on-raspberrypi-linux/installing-circuitpython-on-raspberry-pi):
 
-   8a. To check if blinka is installed, enter: `ls /dev/i2c* /dev/spi*`
+15. `cd ~`
+16. `sudo pip3 install --upgrade adafruit-python-shell`
+17. `wget https://raw.githubusercontent.com/adafruit/Raspberry-Pi-Installer-Scripts/master/raspi-blinka.py`
+18. `sudo python3 raspi-blinka.py`
+
+   18a. To check if blinka is installed, enter: `ls /dev/i2c* /dev/spi*`
        You should see the response: 
        `/dev/i2c-1 /dev/spidev0.0 /dev/spidev0.1`
 
-(Steps 11-12 )For installing Linear Actuator: 
+(Steps 19-22)For installing Linear Actuator: 
 
-11. `python -m pip install PyYAML`
-12. Follow steps 1 through 4 on https://www.pololu.com/docs/0J71/3.2 and install for Rasbperry Pi.
+12. `python -m pip install PyYAML`
+20. Follow steps 1 through 4 on https://www.pololu.com/docs/0J71/3.2 and install for Rasbperry Pi.
 
-14. Installing adafruit motor hat library: `sudo pip3 install adafruit-circuitpython-motorkit`
-15. Installing automation hat library: `curl https://get.pimoroni.com/automationhat | bash`
+21. Installing adafruit motor hat library: `sudo pip3 install adafruit-circuitpython-motorkit`
+22. Installing automation hat library: `curl https://get.pimoroni.com/automationhat | bash`
