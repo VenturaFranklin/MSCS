@@ -104,7 +104,7 @@ Raspberry Pi OS Version:
 
 (Steps 19-22)For installing Linear Actuator: 
 
-12. `python -m pip install PyYAML`
+19. `python -m pip install PyYAML`
 20. Follow steps 1 through 4 on https://www.pololu.com/docs/0J71/3.2 and install for Rasbperry Pi.
 
 21. Installing adafruit motor hat library: `sudo pip3 install adafruit-circuitpython-motorkit`
