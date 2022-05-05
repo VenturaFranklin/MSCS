@@ -58,7 +58,8 @@ This folder contains all files of code needed to run the GUI and control all the
 # Setup Raspberry Pi
 Raspberry Pi OS Version:
 1. Go to (https://downloads.raspberrypi.org/raspios_full_armhf/images/raspios_full_armhf-2021-03-25/) to get `2021-03-04-raspios-buster-armhf-full.zip` 
-   1a. Unzip this file and then install the OS on the Raspberry Pi SD card using something like the Raspberry Pi Imager (https://www.raspberrypi.com/software/)
+  
+  1a. Unzip this file and then install the OS on the Raspberry Pi SD card using something like the Raspberry Pi Imager (https://www.raspberrypi.com/software/)
 
 (Steps 2-5) Standard updates: 
 2. `sudo apt-get update`
@@ -74,6 +75,7 @@ Raspberry Pi OS Version:
 7. `wget -O install_pivariety_pkgs.sh https://github.com/ArduCAM/Arducam-Pivariety-V4L2-Driver/releases/download/install_script/install_pivariety_pkgs.sh`
 8. `chmod +x install_pivariety_pkgs.sh`
 9. `./install_pivariety_pkgs.sh -p kernel_driver`
+
    9a. To check if the camera is detected, enter: `dmesg | grep arducam`
    9b. To check if the video nodes are normal, enter: `ls /dev/video* -l`
    9c. To view the device node information: enter: `v4l2-ctl --list-formats-ext`
@@ -85,6 +87,7 @@ Raspberry Pi OS Version:
 12. `./install_pivariety_pkgs.sh -p libcamera_dev`
 13. `./install_pivariety_pkgs.sh -p libcamera_apps`
 14. Check if the camera is working properly by taking a picture: `libcamera-still -t 5000 -o test.jpg`
+   
    14a. For Raspberry Pi 3 devices: Make sure that `dtoverlay=vc4-fkms-v3d` is in the `[all]` section of `/boot/config.txt`
    14b. Also for Raspberry Pi 3 devices: Add `cma=400M` to the end of `/boot/cmdline.txt`
 
